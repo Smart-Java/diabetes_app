@@ -1,3 +1,4 @@
+import 'package:diabetes_care/pages/reminderPage/widget/reminder_page_view_widget.dart';
 import 'package:flutter/material.dart';
 
 class ReminderPage extends StatelessWidget {
@@ -5,13 +6,13 @@ class ReminderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       top: false,
       bottom: false,
       left: false,
       right: false,
       child: Scaffold(
-        body: Container(),
+        body: ReminderPageViewWidget(),
       ),
     );
   }

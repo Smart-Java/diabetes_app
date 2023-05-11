@@ -26,7 +26,7 @@ class AppColors {
   static const Color appBarActionColor = Color(0xFFA4C76C);
 
   // static const Color splashScreenLoadingIndicatorColor = Color(0xFFFFFFFF);
-  static const Color splashScreenLoadingIndicatorColor = Color(0xFFA4C76C) ;
+  static const Color splashScreenLoadingIndicatorColor = Color(0xFFA4C76C);
   static const Color splashScreenOffLoadingIndicatorColor = Color(0xFF9E9E9E);
 
   static const Color onBoardingActiveIndicatorColor = Color(0xFFA4C76C);
@@ -46,4 +46,8 @@ class AppColors {
   static const Color snackBarBackgroundColor = Color(0xFF000000);
 
   static const Color starFeedbackRatingColor = Color(0xFFA4C76C);
+
+  static const Color dashboardTextColor = Color(0xFF221122);
+  static const Color careTeamColor = Color(0xFFFFDB58);
+  static const Color normalIconTextColor = Color(0xFF40744D);
 }

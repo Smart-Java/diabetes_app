@@ -20,9 +20,9 @@ class AppTheme {
 TextTheme _buildAppLightTextTheme(TextTheme base) {
   return base.copyWith(
     headlineLarge: GoogleFonts.roboto(
-      fontSize: 24,
+      fontSize: 20,
       fontWeight: FontWeight.w700,
-      color: AppColors.appTitleColor,
+      color: AppColors.whiteColor,
     ),
     headline1: GoogleFonts.roboto(
       fontSize: 26,
@@ -31,10 +31,9 @@ TextTheme _buildAppLightTextTheme(TextTheme base) {
       color: AppColors.appTitleColor,
     ),
     headline2: GoogleFonts.roboto(
-      fontSize: 22,
-      fontWeight: FontWeight.w300,
-      letterSpacing: -0.5,
-      color: AppColors.appTitleColor,
+      fontSize: 20,
+      fontWeight: FontWeight.w500,
+      color: AppColors.whiteColor,
     ),
     headline3: GoogleFonts.roboto(
       fontSize: 16,

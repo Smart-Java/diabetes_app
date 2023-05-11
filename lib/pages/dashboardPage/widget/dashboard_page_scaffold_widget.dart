@@ -20,6 +20,9 @@ class _DashboardPageScaffoldWidgetState
     extends State<DashboardPageScaffoldWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  int currentIndex = 0;
+  bool showFAB = false;
+
   @override
   Widget build(BuildContext context) {
     return
@@ -46,7 +49,6 @@ class _DashboardPageScaffoldWidgetState
             ),
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
-              
               elevation: 0.0,
               backgroundColor: AppColors.whiteColor,
               selectedItemColor: AppColors.secondaryColor,
@@ -61,7 +63,14 @@ class _DashboardPageScaffoldWidgetState
               ),
               currentIndex: navigationRouter.activeIndex,
               onTap: (index) {
-                debugPrint('$index ${child.toString()}');
+                setState(() {
+                  if (index != 0) {
+                    showFAB = true;
+                  } else {
+                    showFAB = false;
+                  }
+                  currentIndex = index;
+                });
                 navigationRouter.setActiveIndex(index);
               },
               items: const [
@@ -102,18 +111,63 @@ class _DashboardPageScaffoldWidgetState
                 ),
               ],
             ),
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: AppColors.secondaryColor,
-              child: const Icon(
-                Icons.qr_code_2,
-                color: AppColors.whiteColor,
-              ),
-              onPressed: () => setState(() {}),
-            ),
+            floatingActionButton:
+                showFAB == true ? fabChildWidget() : Container(),
           );
         },
       ),
       // ),
+    );
+  }
+
+  Widget fabChildWidget() {
+    Widget child = Container();
+    if (currentIndex == 1) {
+      return customeFabChildItemWidget(
+          iconData: Icons.add_circle_outline_rounded, title: 'Add Reminder');
+    } else if (currentIndex == 2) {
+      return customeFabChildItemWidget(
+          iconData: Icons.add_circle_outline_rounded, title: 'Add Records');
+    } else if (currentIndex == 3) {
+      return customeFabChildItemWidget(
+          iconData: Icons.add_circle_outline_rounded, title: 'Request diet');
+    } else if (currentIndex == 4) {
+      return customeFabChildItemWidget(
+          iconData: Icons.add_circle_outline_rounded, title: 'Edit Profile');
+    }
+    return child;
+  }
+
+  Widget customeFabChildItemWidget({
+    required IconData iconData,
+    required String title,
+  }) {
+    return Container(
+      height: 50.0,
+      width: 150.0,
+      decoration: BoxDecoration(
+        color: AppColors.secondaryColor,
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.add_circle_outline,
+              color: AppColors.whiteColor,
+            ),
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppColors.whiteColor,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
