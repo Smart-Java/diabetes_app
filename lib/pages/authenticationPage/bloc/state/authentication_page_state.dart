@@ -1,9 +1,6 @@
+import 'package:diabetes_care/pages/authenticationPage/model/login_response_model.dart/login_response_model.dart';
+import 'package:diabetes_care/pages/authenticationPage/model/register_response_model.dart/register_response_model.dart';
 import 'package:equatable/equatable.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/responseModel/forgotPasswordModel/forgot_password_response_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/responseModel/loginResponseModel/login_response_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/responseModel/registerResponseModel/register_response_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/responseModel/resendVerificationEmailResponseModel/resend_verification_email_response_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/responseModel/sendEmailForForgotPasswordModel/send_email_for_forgot_password_response_model.dart';
 
 class AuthenticationPageState extends Equatable {
   const AuthenticationPageState({
@@ -14,16 +11,15 @@ class AuthenticationPageState extends Equatable {
     this.isFieldEmpty,
     this.isEmailAddressFormatTrue,
     this.loginResponseModel,
-    this.registerResponseModel,
     this.isPasswordMismatched,
     this.redirectToLoginComponent,
-    this.forgotPasswordResponseModel,
-    this.sendEmailForForgotPasswordResponseModel,
     this.isPasswordGivenPermitted,
     this.isAccountVerified,
     this.hasVerificationEmailBeSent,
     this.isResendVerificationEmailInProgress,
-    this.resendVerificationEmailResponseModel,
+    this.registerResponseModel,
+    this.isItAPatient,
+    this.userCategory,
   });
 
   final bool? isLoading;
@@ -36,15 +32,12 @@ class AuthenticationPageState extends Equatable {
   final bool? isEmailAddressFormatTrue;
   final LoginResponseModel? loginResponseModel;
   final RegisterResponseModel? registerResponseModel;
-  final ForgotPasswordResponseModel? forgotPasswordResponseModel;
-  final SendEmailForForgotPasswordResponseModel?
-      sendEmailForForgotPasswordResponseModel;
-  final ResendVerificationEmailResponseModel?
-      resendVerificationEmailResponseModel;
   final bool? isPasswordGivenPermitted;
   final bool? isAccountVerified;
   final bool? isResendVerificationEmailInProgress;
   final bool? hasVerificationEmailBeSent;
+  final bool? isItAPatient;
+  final String? userCategory;
 
   @override
   List<Object?> get props => [
@@ -58,13 +51,12 @@ class AuthenticationPageState extends Equatable {
         registerResponseModel,
         isPasswordMismatched,
         redirectToLoginComponent,
-        forgotPasswordResponseModel,
-        sendEmailForForgotPasswordResponseModel,
-        resendVerificationEmailResponseModel,
         isPasswordGivenPermitted,
         isAccountVerified,
         isResendVerificationEmailInProgress,
         hasVerificationEmailBeSent,
+        isItAPatient,
+        userCategory,
       ];
 
   AuthenticationPageState copyWith({
@@ -73,20 +65,14 @@ class AuthenticationPageState extends Equatable {
     bool? isFieldEmpty,
     bool? isAuthenticationRequestSuccessful,
     bool? isPasswordGivenPermitted,
-    bool? isAccountVerified,
-    bool? isResendVerificationEmailInProgress,
-    bool? hasVerificationEmailBeSent,
     String? authenticationMessage,
     bool? isEmailAddressFormatTrue,
     LoginResponseModel? loginResponseModel,
     RegisterResponseModel? registerResponseModel,
-    ForgotPasswordResponseModel? forgotPasswordResponseModel,
-    SendEmailForForgotPasswordResponseModel?
-        sendEmailForForgotPasswordResponseModel,
-    ResendVerificationEmailResponseModel? resendVerificationEmailResponseModel,
-    bool? isNewOTPSentAcross,
     bool? isPasswordMismatched,
     bool? redirectToLoginComponent,
+    bool? isItAPatient,
+    String? userCategory,
   }) {
     return AuthenticationPageState(
       isLoading: isLoading,
@@ -97,17 +83,14 @@ class AuthenticationPageState extends Equatable {
       isEmailAddressFormatTrue: isEmailAddressFormatTrue,
       loginResponseModel: loginResponseModel,
       registerResponseModel: registerResponseModel,
-      forgotPasswordResponseModel: forgotPasswordResponseModel,
-      sendEmailForForgotPasswordResponseModel:
-          sendEmailForForgotPasswordResponseModel,
       isPasswordMismatched: isPasswordMismatched,
       redirectToLoginComponent: redirectToLoginComponent,
-      resendVerificationEmailResponseModel:
-          resendVerificationEmailResponseModel,
       isPasswordGivenPermitted: isPasswordGivenPermitted,
       isAccountVerified: isAccountVerified,
       isResendVerificationEmailInProgress: isResendVerificationEmailInProgress,
       hasVerificationEmailBeSent: hasVerificationEmailBeSent,
+      isItAPatient: isItAPatient,
+      userCategory: userCategory,
     );
   }
 }

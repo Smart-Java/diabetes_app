@@ -1,12 +1,7 @@
 import 'package:diabetes_care/localStorage/sharedPreferences/app_shared_preferences.dart';
 import 'package:diabetes_care/pages/authenticationPage/bloc/event/authentication_page_event.dart';
 import 'package:diabetes_care/pages/authenticationPage/bloc/state/authentication_page_state.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/requestModel/accountEmailVerificationRequestModel/account_email_verification_request_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/requestModel/forgotPasswordRequestModel/forgot_password_request_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/requestModel/loginRequestModel/login_request_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/requestModel/passwordEmailVerificationRequestModel/password_email_verification_request_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/model/requestModel/registerRequestModel/register_request_model.dart';
-import 'package:diabetes_care/pages/authenticationPage/repo/repoInterface/authentication_page_repo_interface.dart';
+import 'package:diabetes_care/pages/authenticationPage/service/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -14,12 +9,12 @@ import 'package:injectable/injectable.dart';
 @injectable
 class AuthenticationPageBloc
     extends Bloc<AuthenticationPageEvent, AuthenticationPageState> {
-  final AuthenticationPageRepoInterface authenticationPageRepo;
   final AppSharedPreferences appSharedPreferences;
+  final AuthService authService;
 
   AuthenticationPageBloc(
-    this.authenticationPageRepo,
     this.appSharedPreferences,
+    this.authService,
   ) : super(const AuthenticationPageState()) {
     on<ChangeAuthenticationStateEvent>((event, emit) {
       debugPrint('login : ${event.changeToLoginState.toString()}');
@@ -48,49 +43,31 @@ class AuthenticationPageBloc
         String emailAddress = event.emailAddress;
         String password = event.password;
 
-        String deviceName = '';
+        var requestResponse = await authService.loginUser(
+            email: emailAddress, password: password);
 
-        LoginRequestModel loginRequestModel = LoginRequestModel(
-          emailAddress: emailAddress,
-          password: password,
-          deviceName: deviceName,
-        );
-
-        var requestResponse =
-            await authenticationPageRepo.loginAuthenticationRepoRequest(
-          loginRequestJson: loginRequestModel.toJson(),
-        );
-
-        bool isAccountVerified = false;
+        bool isItAPatient = false;
+        String userCategory = '';
 
         if (requestResponse!.status == true) {
-          isAccountVerified =
-              requestResponse.data['user']['email_verified_at'] != null
-                  ? true
-                  : false;
-          if (isAccountVerified == true) {
-            await appSharedPreferences.cacheDeviceAuthState();
-          }
+          var userData = requestResponse.data!;
+          debugPrint(userData.toString());
+          isItAPatient = userData['isItAPatient'];
+          userCategory = userData['category'];
         }
 
         var responseMessage = requestResponse.message;
-
 
         emit(
           state.copyWith(
             isLoading: false,
             isItLoginState: event.loginState,
-            authenticationMessage: requestResponse.status == true
-                ? isAccountVerified == true
-                    ? 'Login successfully done'
-                    : 'Account not verified'
-                : responseMessage.replaceFirst(
-                    responseMessage[0], responseMessage[0].toUpperCase()),
-            isAccountVerified: isAccountVerified,
+            authenticationMessage: responseMessage!.replaceFirst(
+                responseMessage[0], responseMessage[0].toUpperCase()),
             loginResponseModel: requestResponse,
             isAuthenticationRequestSuccessful: requestResponse.status,
-            // isADriver: isADriver,
-            // driverStatus: driverStatus,
+            isItAPatient: isItAPatient,
+            userCategory: userCategory,
           ),
         );
       } else {
@@ -140,19 +117,27 @@ class AuthenticationPageBloc
     });
     on<RegisterAuthenticationEvent>((event, emit) async {
       if (event.emailAddress.isNotEmpty &&
-          event.userName.isNotEmpty &&
+          event.fullName.isNotEmpty &&
           event.password.isNotEmpty &&
-          event.retypePassword.isNotEmpty) {
+          event.retypePassword.isNotEmpty &&
+          event.category.isNotEmpty) {
         emit(
           state.copyWith(
             isLoading: true,
             isItLoginState: event.loginState,
           ),
         );
-        var userName = event.userName;
-        var emailAddress = event.emailAddress;
+        bool isItAPatient = false;
+
+        var fullName = event.fullName;
         var password = event.password;
-        var retypePassword = event.retypePassword;
+        var category = event.category;
+
+        if (category.toLowerCase() == 'patient') {
+          isItAPatient = true;
+        } else {
+          isItAPatient = false;
+        }
 
         var email = event.emailAddress;
         bool isEmailValid = RegExp(
@@ -162,17 +147,12 @@ class AuthenticationPageBloc
 
         if (isEmailValid == true) {
           if (event.password == event.retypePassword) {
-            RegisterRequestModel registerRequestModel = RegisterRequestModel(
-              emailAddress: emailAddress.trim(),
-              firstName: userName.trim(),
-              lastName: '',
+            var requestResponse = await authService.registerUser(
+              fullName: fullName,
               password: password,
-              retypePassword: retypePassword,
-            );
-
-            var requestResponse =
-                await authenticationPageRepo.registerAuthenticationRepoRequest(
-              registerRequestJson: registerRequestModel.toJson(),
+              category: category,
+              isItAPatient: isItAPatient,
+              email: email,
             );
             if (requestResponse!.status == true) {
               await appSharedPreferences.cacheDeviceAuthState();
@@ -183,10 +163,10 @@ class AuthenticationPageBloc
                 isLoading: false,
                 isEmailAddressFormatTrue: isEmailValid,
                 isItLoginState: event.loginState,
-                authenticationMessage: requestResponse.status == true
-                    ? 'Registration successfully done, an email has be sent across your email address, $emailAddress.'
-                    : responseMessage.replaceFirst(
-                        responseMessage[0], responseMessage[0].toUpperCase()),
+                authenticationMessage: responseMessage!.replaceFirst(
+                  responseMessage[0],
+                  responseMessage[0].toUpperCase(),
+                ),
                 registerResponseModel: requestResponse,
                 redirectToLoginComponent: requestResponse.status,
                 isAuthenticationRequestSuccessful: requestResponse.status,
@@ -240,64 +220,6 @@ class AuthenticationPageBloc
         }
       }
     });
-    on<ForgotPasswordAuthenticationEvent>((event, emit) async {
-      if (event.email.isNotEmpty &&
-          event.password.isNotEmpty &&
-          event.retypePassword.isNotEmpty &&
-          event.token.isNotEmpty) {
-        if (event.password != event.retypePassword) {
-          emit(
-            state.copyWith(
-                isLoading: false,
-                isPasswordMismatched: true,
-                authenticationMessage: 'Password mismatch'),
-          );
-        } else {
-          emit(state.copyWith(
-            isLoading: true,
-          ));
-          var emailAddress = event.email;
-          var password = event.password;
-          var retypePassword = event.retypePassword;
-          var token = event.token;
-
-          ForgotPasswordRequestModel forgotPasswordRequestModel =
-              ForgotPasswordRequestModel(
-            emailAddress: emailAddress,
-            confirmPassword: retypePassword,
-            password: password,
-            token: token,
-          );
-
-          var passwordChangeRequest = await authenticationPageRepo
-              .forgotPasswordAuthenticationRepoRequest(
-            forgotPasswordRequestJson: forgotPasswordRequestModel.toJson(),
-          );
-          var responseMessage = passwordChangeRequest.message;
-          emit(
-            state.copyWith(
-              isLoading: false,
-              isPasswordMismatched: false,
-              forgotPasswordResponseModel: passwordChangeRequest,
-              isAuthenticationRequestSuccessful:
-                  passwordChangeRequest!.status ?? false,
-              redirectToLoginComponent: passwordChangeRequest.status ?? false,
-              authenticationMessage: passwordChangeRequest.status == true
-                  ? 'Password successfully changed'
-                  : responseMessage.replaceFirst(
-                      responseMessage[0], responseMessage[0].toUpperCase()),
-            ),
-          );
-        }
-      } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            authenticationMessage: 'All fields are required',
-          ),
-        );
-      }
-    });
     on<RedirectToLoginComponentAfterRegisterAuthenticationEvent>(
         (event, emit) async {
       emit(
@@ -315,81 +237,6 @@ class AuthenticationPageBloc
           isItLoginState: true,
         ),
       );
-    });
-    on<SendTokenToUserEmailForForgotPasswordAuthenticationEvent>(
-        (event, emit) async {
-      if (event.emailAddress.isNotEmpty) {
-        emit(state.copyWith(
-          isLoading: true,
-        ));
-        var emailAddress = event.emailAddress;
-
-        PasswordEmailVerificationRequestModel
-            passwordEmailVerificationRequestModel =
-            PasswordEmailVerificationRequestModel(emailAddress: emailAddress);
-
-        var sendTokenToEmailForpasswordChangeRequest =
-            await authenticationPageRepo
-                .sendTokenToEmailForForgotPasswordAuthenticationRepoRequest(
-          forgotPasswordTokenRequestJson:
-              passwordEmailVerificationRequestModel.toJson(),
-        );
-        var responseMessage = sendTokenToEmailForpasswordChangeRequest!.message;
-        emit(
-          state.copyWith(
-            isLoading: false,
-            isPasswordMismatched: false,
-            sendEmailForForgotPasswordResponseModel:
-                sendTokenToEmailForpasswordChangeRequest,
-            authenticationMessage: responseMessage.replaceFirst(
-                responseMessage[0], responseMessage[0].toUpperCase()),
-            isAuthenticationRequestSuccessful:
-                sendTokenToEmailForpasswordChangeRequest.status,
-          ),
-        );
-      } else {
-        emit(
-          state.copyWith(
-              isLoading: false,
-              authenticationMessage: 'All fields are required'),
-        );
-      }
-    });
-    on<ResendVerificationEmailToUserAuthenticationEvent>((event, emit) async {
-      if (event.emailAddress.isNotEmpty) {
-        emit(state.copyWith(
-          isResendVerificationEmailInProgress: true,
-        ));
-        var emailAddress = event.emailAddress;
-
-        AccountEmailVerificationRequestModel
-            accountEmailVerificationRequestModel =
-            AccountEmailVerificationRequestModel(emailAddress: emailAddress);
-
-        var sendVerificationEmailRequestResponse = await authenticationPageRepo
-            .resendVerificationEmailAuthenticationRepoRequest(
-          verificationEmailRequestJson:
-              accountEmailVerificationRequestModel.toJson(),
-        );
-
-        var responseMessage = sendVerificationEmailRequestResponse!.message;
-
-        emit(
-          state.copyWith(
-            isResendVerificationEmailInProgress: false,
-            hasVerificationEmailBeSent:
-                sendVerificationEmailRequestResponse.status == true
-                    ? true
-                    : false,
-            resendVerificationEmailResponseModel:
-                sendVerificationEmailRequestResponse,
-            authenticationMessage: responseMessage.replaceFirst(
-                responseMessage[0], responseMessage[0].toUpperCase()),
-            isAuthenticationRequestSuccessful:
-                sendVerificationEmailRequestResponse.status,
-          ),
-        );
-      }
     });
   }
 }

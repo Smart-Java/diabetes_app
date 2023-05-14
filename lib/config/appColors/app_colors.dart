@@ -12,6 +12,7 @@ class AppColors {
   static const Color appBar = Color(0xFFA4C76C);
   static const Color whiteColor = Color(0xFFFFFFFF);
   static const Color blackColor = Color(0xFF000000);
+  static const Color arrowBackColor = Color(0xFF333333);
   static const Color notificationIconColor = Color(0xFFFFFFFF);
   static const Color settingIconColor = Color(0xFFFFFFFF);
   static const Color orangeColor = Color(0xFFECBB1A);
@@ -50,4 +51,10 @@ class AppColors {
   static const Color dashboardTextColor = Color(0xFF221122);
   static const Color careTeamColor = Color(0xFFFFDB58);
   static const Color normalIconTextColor = Color(0xFF40744D);
+
+  static const Color bgCareTeamImageColor = Color(0xFFEAEAE8);
+  static const Color searchTextColor = Color(0xFF8F8E8F);
+  static const Color timeDesColor = Color(0xFFF9FAFC);
+  static const Color popUpDropDownColor = Color(0xFF8F8E8F);
+  static const Color patientPortifolioColor = Color(0xFFECBB1A);
 }

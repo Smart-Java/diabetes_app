@@ -35,6 +35,8 @@ class AuthenticationHeaderWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.center,
                       colors: [
                         AppColors.navContainerColor.withOpacity(0.68),
                         AppColors.navContainerColor.withOpacity(0.17),
@@ -44,7 +46,7 @@ class AuthenticationHeaderWidget extends StatelessWidget {
                   child: const Icon(
                     Icons.arrow_back,
                     size: 26.0,
-                    color: AppColors.blackColor,
+                    color: AppColors.arrowBackColor,
                   ),
                 ),
               ),

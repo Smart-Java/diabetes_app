@@ -27,6 +27,16 @@ class _AuthenticationRegisterWidgetState
 
   final formStateKey = GlobalKey<FormState>();
 
+  List<String> users = [
+    '',
+    'Patient',
+    'Doctor',
+    'Dietitain',
+    'Care Giver',
+  ];
+
+  String userChoice = '';
+
   bool? emailAddressVerified = true;
 
   bool? isUserPasswordPermitted = true;
@@ -42,6 +52,7 @@ class _AuthenticationRegisterWidgetState
   bool isThereErrorForRegisterPasswordField = false;
   bool isThereErrorForRegisterRetypePasswordField = false;
   bool isThereErrorForRegisterUsernameField = false;
+  bool isThereErrorForRegisterCategoryField = false;
 
   bool isEmailFieldEmpty = true;
   bool isPasswordFieldEmpty = true;
@@ -51,6 +62,10 @@ class _AuthenticationRegisterWidgetState
   @override
   void initState() {
     super.initState();
+    users = users.toSet().toList();
+    if (users.isNotEmpty) {
+      userChoice = users[0];
+    }
   }
 
   @override
@@ -117,7 +132,17 @@ class _AuthenticationRegisterWidgetState
               builder: (context) {
                 return AuthenticationSuccessMessageDialogWidgetView(
                   isItForRoutingToANewPage: false,
-                  routeFunctionality: () {},
+                  routeFunctionality: () {
+                    Future.delayed(const Duration()).then((value) {
+                      Navigator.pop(context);
+                    }).then((value) {
+                      BlocProvider.of<AuthenticationPageBloc>(context).add(
+                        ChangeAuthenticationStateEvent(
+                          changeToLoginState: true,
+                        ),
+                      );
+                    });
+                  },
                   message: message,
                   title: 'Success',
                 );
@@ -152,348 +177,315 @@ class _AuthenticationRegisterWidgetState
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(
-                        bottom: 20.0,
+                        bottom: 30.0,
                       ),
-                      child: Column(
-                        children: [
-                          Card(
-                            elevation: 2.0,
-                            shape: txtFieldBorder,
-                            child: TextField(
-                              controller: userNameController,
-                              keyboardType: TextInputType.text,
-                              enabled: !loading,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: AppColors.textFieldFilledColor,
-                                prefixIcon: loginIconForm(
-                                  icon: Icons.person,
-                                ),
-                                hintText: 'Username',
-                                border: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                              ),
-                              onChanged: (value) {
-                                if (userNameController.text.isNotEmpty &&
-                                    isThereErrorForRegisterUsernameField ==
-                                        true) {
-                                  setState(() {
-                                    isThereErrorForRegisterUsernameField =
-                                        !isThereErrorForRegisterUsernameField;
-                                  });
-                                } else {
-                                  setState(() {
-                                    isThereErrorForRegisterUsernameField =
-                                        false;
-                                  });
-                                }
-                              },
-                            ),
+                      child: TextField(
+                        controller: userNameController,
+                        keyboardType: TextInputType.text,
+                        enabled: !loading,
+                        decoration: InputDecoration(
+                          prefixIcon: loginIconForm(
+                            icon: Icons.person,
                           ),
-                          isThereErrorForRegisterUsernameField == true
-                              ? Align(
-                                  alignment: AlignmentDirectional.topStart,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 10.0),
-                                    child: Text(
-                                      'Username is required',
-                                      style: errorTextStyle,
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                        ],
+                          hintText: 'Fullname',
+                          hintStyle: hintTextStyle,
+                          errorText:
+                              isThereErrorForRegisterUsernameField == true
+                                  ? 'Username is required'
+                                  : null,
+                          border: textFieldBorder,
+                          disabledBorder: textFieldBorder,
+                          enabledBorder: textFieldBorder,
+                          focusedBorder: textFieldBorder,
+                        ),
+                        onChanged: (value) {
+                          if (userNameController.text.isNotEmpty &&
+                              isThereErrorForRegisterUsernameField == true) {
+                            setState(() {
+                              isThereErrorForRegisterUsernameField =
+                                  !isThereErrorForRegisterUsernameField;
+                            });
+                          } else {
+                            setState(() {
+                              isThereErrorForRegisterUsernameField = false;
+                            });
+                          }
+                        },
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                        bottom: 20.0,
+                        bottom: 30.0,
                       ),
-                      child: Column(
-                        children: [
-                          Card(
-                            elevation: 2.0,
-                            shape: txtFieldBorder,
-                            child: TextField(
-                              controller: emailAddressController,
-                              keyboardType: TextInputType.emailAddress,
-                              enabled: !loading,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: AppColors.textFieldFilledColor,
-                                prefixIcon: loginIconForm(
-                                  icon: Icons.email,
-                                ),
-                                hintText: 'Email',
-                                border: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                              ),
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  setState(() {
-                                    isEmailFieldEmpty = false;
-                                  });
-                                  if (value.isNotEmpty &&
-                                      isThereErrorForRegisterEmailField ==
-                                          true) {
-                                    setState(() {
-                                      isThereErrorForRegisterEmailField =
-                                          !isThereErrorForRegisterEmailField;
-                                    });
-                                  }
-                                  BlocProvider.of<AuthenticationPageBloc>(
-                                          context)
-                                      .add(
-                                    ValidateEmailAddressForRegistrationAuthentication(
-                                      emailAddress: emailAddressController.text,
-                                      loginState: false,
-                                    ),
-                                  );
-                                } else {
-                                  setState(() {
-                                    isEmailFieldEmpty = true;
-                                  });
-                                }
-                              },
-                            ),
+                      child: TextField(
+                        controller: emailAddressController,
+                        keyboardType: TextInputType.emailAddress,
+                        enabled: !loading,
+                        decoration: InputDecoration(
+                          prefixIcon: loginIconForm(
+                            icon: Icons.email,
                           ),
-                          Align(
-                            alignment: AlignmentDirectional.topStart,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                isEmailFieldEmpty == true
-                                    ? isThereErrorForRegisterEmailField == true
-                                        ? 'Enter a vaild email address'
-                                        : ''
-                                    : emailAddressVerified == false
-                                        ? 'Enter a vaild email address'
-                                        : isThereErrorForRegisterEmailField ==
-                                                true
-                                            ? 'Enter a vaild email address'
-                                            : '',
-                                style: errorTextStyle,
+                          hintText: 'Email',
+                          hintStyle: hintTextStyle,
+                          errorText: isEmailFieldEmpty == true
+                              ? isThereErrorForRegisterEmailField == true
+                                  ? 'Enter a vaild email address'
+                                  : null
+                              : emailAddressVerified == false
+                                  ? 'Enter a vaild email address'
+                                  : isThereErrorForRegisterEmailField == true
+                                      ? 'Enter a vaild email address'
+                                      : null,
+                          errorStyle: errorTextStyle,
+                          border: textFieldBorder,
+                          disabledBorder: textFieldBorder,
+                          enabledBorder: textFieldBorder,
+                          focusedBorder: textFieldBorder,
+                        ),
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              isEmailFieldEmpty = false;
+                            });
+                            if (value.isNotEmpty &&
+                                isThereErrorForRegisterEmailField == true) {
+                              setState(() {
+                                isThereErrorForRegisterEmailField =
+                                    !isThereErrorForRegisterEmailField;
+                              });
+                            }
+                            BlocProvider.of<AuthenticationPageBloc>(context)
+                                .add(
+                              ValidateEmailAddressForRegistrationAuthentication(
+                                emailAddress: emailAddressController.text,
+                                loginState: false,
                               ),
-                            ),
-                          ),
-                        ],
+                            );
+                          } else {
+                            setState(() {
+                              isEmailFieldEmpty = true;
+                            });
+                          }
+                        },
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                        bottom: 20.0,
+                        bottom: 30.0,
                       ),
-                      child: Column(
-                        children: [
-                          Card(
-                            elevation: 2.0,
-                            shape: txtFieldBorder,
-                            child: TextField(
-                              controller: passwordController,
-                              keyboardType: TextInputType.text,
-                              enabled: !loading,
-                              obscureText: passwordShouldBeInvisible,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: AppColors.textFieldFilledColor,
-                                prefixIcon: loginIconForm(
-                                  icon: Icons.lock,
-                                ),
-                                hintText: 'Enter password',
-                                border: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      passwordShouldBeInvisible =
-                                          !passwordShouldBeInvisible;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    passwordShouldBeInvisible == false
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: AppColors.passwordVisibilityColor,
-                                  ),
-                                ),
-                              ),
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  setState(() {
-                                    isPasswordFieldEmpty = false;
-                                  });
-                                  if (value.isNotEmpty &&
-                                      isThereErrorForRegisterPasswordField ==
-                                          true) {
-                                    setState(() {
-                                      isThereErrorForRegisterPasswordField =
-                                          !isThereErrorForRegisterPasswordField;
-                                    });
-                                  }
-                                  BlocProvider.of<AuthenticationPageBloc>(
-                                          context)
-                                      .add(
-                                    ValidatePasswordForRegistrationAuthentication(
-                                        password: passwordController.text),
-                                  );
-                                } else {
-                                  setState(() {
-                                    isThereErrorForRegisterPasswordField =
-                                        false;
-                                    isPasswordFieldEmpty = true;
-                                  });
-                                }
-                              },
+                      child: TextField(
+                        controller: passwordController,
+                        keyboardType: TextInputType.text,
+                        enabled: !loading,
+                        obscureText: passwordShouldBeInvisible,
+                        decoration: InputDecoration(
+                          prefixIcon: loginIconForm(
+                            icon: Icons.lock,
+                          ),
+                          hintText: 'Enter password',
+                          hintStyle: hintTextStyle,
+                          errorText: isPasswordFieldEmpty == true
+                              ? isThereErrorForRegisterPasswordField == true
+                                  ? 'Password is required'
+                                  : null
+                              : isThereErrorForRegisterPasswordField == true
+                                  ? 'Password is required'
+                                  : isUserPasswordPermitted == false
+                                      ? 'Minimum of eight characters required, at least: \nOne uppercase letter, \nOne lowercase letter, \nOne number and one special character'
+                                      : null,
+                          errorStyle: errorTextStyle,
+                          border: textFieldBorder,
+                          disabledBorder: textFieldBorder,
+                          enabledBorder: textFieldBorder,
+                          focusedBorder: textFieldBorder,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                passwordShouldBeInvisible =
+                                    !passwordShouldBeInvisible;
+                              });
+                            },
+                            icon: Icon(
+                              passwordShouldBeInvisible == false
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.passwordVisibilityColor,
                             ),
                           ),
-                          Align(
-                            alignment: AlignmentDirectional.topStart,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                isPasswordFieldEmpty == true
-                                    ? isThereErrorForRegisterPasswordField ==
-                                            true
-                                        ? 'Password is required'
-                                        : ''
-                                    : isThereErrorForRegisterPasswordField ==
-                                            true
-                                        ? 'Password is required'
-                                        : isUserPasswordPermitted == false
-                                            ? 'Minimum of eight characters required, at least: \nOne uppercase letter, \nOne lowercase letter, \nOne number and one special character'
-                                            : '',
-                                style: errorTextStyle,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              isPasswordFieldEmpty = false;
+                            });
+                            if (value.isNotEmpty &&
+                                isThereErrorForRegisterPasswordField == true) {
+                              setState(() {
+                                isThereErrorForRegisterPasswordField =
+                                    !isThereErrorForRegisterPasswordField;
+                              });
+                            }
+                            BlocProvider.of<AuthenticationPageBloc>(context)
+                                .add(
+                              ValidatePasswordForRegistrationAuthentication(
+                                  password: passwordController.text),
+                            );
+                          } else {
+                            setState(() {
+                              isThereErrorForRegisterPasswordField = false;
+                              isPasswordFieldEmpty = true;
+                            });
+                          }
+                        },
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                        bottom: 20.0,
+                        bottom: 30.0,
                       ),
-                      child: Column(
-                        children: [
-                          Card(
-                            elevation: 2.0,
-                            shape: txtFieldBorder,
-                            child: TextField(
-                              controller: retypePasswordController,
-                              keyboardType: TextInputType.text,
-                              enabled: !loading,
-                              obscureText: retypePasswordShouldBeInvisible,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: AppColors.textFieldFilledColor,
-                                prefixIcon: loginIconForm(
-                                  icon: Icons.lock,
-                                ),
-                                hintText: 'Retype password',
-                                border: textFieldBorder,
-                                enabledBorder: textFieldBorder,
-                                disabledBorder: textFieldBorder,
-                                focusedBorder: textFieldBorder,
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      retypePasswordShouldBeInvisible =
-                                          !retypePasswordShouldBeInvisible;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    retypePasswordShouldBeInvisible == false
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: AppColors.passwordVisibilityColor,
-                                  ),
-                                ),
-                              ),
-                              onChanged: (value) {
-                                if (value.isNotEmpty &&
-                                    isThereErrorForRegisterRetypePasswordField ==
-                                        true) {
-                                  setState(() {
-                                    isThereErrorForRegisterRetypePasswordField =
-                                        !isThereErrorForRegisterRetypePasswordField;
-                                  });
-                                } else {
-                                  setState(() {
-                                    isThereErrorForRegisterRetypePasswordField =
-                                        false;
-                                  });
-                                }
-                                if (isUserPasswordPermitted == true) {
-                                  BlocProvider.of<AuthenticationPageBloc>(
-                                          context)
-                                      .add(
-                                    PasswordAndRetypePasswordConfirmationAuthenticationEvent(
-                                      password: passwordController.text,
-                                      retypePassword:
-                                          retypePasswordController.text,
-                                    ),
-                                  );
-                                } else {
-                                  setState(() {
-                                    isUserPasswordPermitted = false;
-                                  });
-                                }
-                              },
-                              onSubmitted: (value) {
-                                if (isUserPasswordPermitted == true) {
-                                  BlocProvider.of<AuthenticationPageBloc>(
-                                          context)
-                                      .add(
-                                    PasswordAndRetypePasswordConfirmationAuthenticationEvent(
-                                      password: passwordController.text,
-                                      retypePassword:
-                                          retypePasswordController.text,
-                                    ),
-                                  );
-                                } else {
-                                  setState(() {
-                                    isUserPasswordPermitted = false;
-                                  });
-                                }
-                              },
+                      child: TextField(
+                        controller: retypePasswordController,
+                        keyboardType: TextInputType.text,
+                        enabled: !loading,
+                        obscureText: retypePasswordShouldBeInvisible,
+                        decoration: InputDecoration(
+                          prefixIcon: loginIconForm(
+                            icon: Icons.lock,
+                          ),
+                          hintText: 'Retype password',
+                          hintStyle: hintTextStyle,
+                          errorText:
+                              isThereErrorForRegisterRetypePasswordField == true
+                                  ? 'Retype password is required'
+                                  : null,
+                          errorStyle: errorTextStyle,
+                          border: textFieldBorder,
+                          enabledBorder: textFieldBorder,
+                          disabledBorder: textFieldBorder,
+                          focusedBorder: textFieldBorder,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                retypePasswordShouldBeInvisible =
+                                    !retypePasswordShouldBeInvisible;
+                              });
+                            },
+                            icon: Icon(
+                              retypePasswordShouldBeInvisible == false
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.passwordVisibilityColor,
                             ),
                           ),
-                          isThereErrorForRegisterRetypePasswordField == true
-                              ? Align(
-                                  alignment: AlignmentDirectional.topStart,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 10.0),
-                                    child: Text(
-                                      'Retype password is required',
-                                      style: errorTextStyle,
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          isPasswordMismatched == false
-                              ? Container()
-                              : const Padding(
-                                  padding: EdgeInsets.only(top: 2),
-                                  child: Align(
-                                    alignment: AlignmentDirectional.topStart,
-                                    child: Text(
-                                      'Password mismatched',
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 14.0,
+                        ),
+                        onChanged: (value) {
+                          if (value.isNotEmpty &&
+                              isThereErrorForRegisterRetypePasswordField ==
+                                  true) {
+                            setState(() {
+                              isThereErrorForRegisterRetypePasswordField =
+                                  !isThereErrorForRegisterRetypePasswordField;
+                            });
+                          } else {
+                            setState(() {
+                              isThereErrorForRegisterRetypePasswordField =
+                                  false;
+                            });
+                          }
+                          if (isUserPasswordPermitted == true) {
+                            BlocProvider.of<AuthenticationPageBloc>(context)
+                                .add(
+                              PasswordAndRetypePasswordConfirmationAuthenticationEvent(
+                                password: passwordController.text,
+                                retypePassword: retypePasswordController.text,
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              isUserPasswordPermitted = false;
+                            });
+                          }
+                        },
+                        onSubmitted: (value) {
+                          if (isUserPasswordPermitted == true) {
+                            BlocProvider.of<AuthenticationPageBloc>(context)
+                                .add(
+                              PasswordAndRetypePasswordConfirmationAuthenticationEvent(
+                                password: passwordController.text,
+                                retypePassword: retypePasswordController.text,
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              isUserPasswordPermitted = false;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    users.length > 1
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                DropdownButtonFormField(
+                                  items: users.map((String choice) {
+                                    return DropdownMenuItem(
+                                      value: choice,
+                                      child: Text(
+                                        choice,
+                                        style: hintTextStyle,
                                       ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    var newUserChoice = value as String;
+                                    if (newUserChoice.isNotEmpty &&
+                                        isThereErrorForRegisterCategoryField ==
+                                            true) {
+                                      setState(() {
+                                        isThereErrorForRegisterCategoryField =
+                                            !isThereErrorForRegisterCategoryField;
+                                      });
+                                    }
+                                    setState(() {
+                                      userChoice = newUserChoice;
+                                    });
+                                  },
+                                  value: userChoice,
+                                  decoration: InputDecoration(
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                     ),
+                                    focusedBorder: textFieldBorder,
+                                    disabledBorder: textFieldBorder,
+                                    enabledBorder: textFieldBorder,
+                                    contentPadding: const EdgeInsets.fromLTRB(
+                                        10, 20, 10, 20),
                                   ),
                                 ),
-                        ],
-                      ),
-                    ),
+                                isThereErrorForRegisterCategoryField == true
+                                    ? const Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 12.0,
+                                          top: 8.0,
+                                        ),
+                                        child: Text(
+                                          'Category is required',
+                                          style: TextStyle(
+                                            color: AppColors.redColor,
+                                            fontSize: 13.0,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
               ),
@@ -623,16 +615,17 @@ class _AuthenticationRegisterWidgetState
         isThereErrorForRegisterUsernameField = false;
       });
     }
-  }
 
-  OutlineInputBorder textFieldBorder = const OutlineInputBorder(
-    borderRadius: BorderRadius.all(
-      Radius.circular(5.0),
-    ),
-    borderSide: BorderSide(
-      color: AppColors.textFieldBorderColor,
-    ),
-  );
+    if (userChoice.isEmpty) {
+      setState(() {
+        isThereErrorForRegisterCategoryField = true;
+      });
+    } else {
+      setState(() {
+        isThereErrorForRegisterCategoryField = false;
+      });
+    }
+  }
 
   void registerUser({required BuildContext context}) {
     if (isThereErrorForRegisterEmailField == false &&
@@ -640,14 +633,16 @@ class _AuthenticationRegisterWidgetState
         isThereErrorForRegisterRetypePasswordField == false &&
         isThereErrorForRegisterUsernameField == false &&
         isUserPasswordPermitted == true &&
+        isThereErrorForRegisterCategoryField == false &&
         emailAddressVerified == true) {
       BlocProvider.of<AuthenticationPageBloc>(context).add(
         RegisterAuthenticationEvent(
           emailAddress: emailAddressController.text,
-          userName: userNameController.text,
+          fullName: userNameController.text,
           loginState: false,
           password: passwordController.text,
           retypePassword: retypePasswordController.text,
+          category: userChoice,
         ),
       );
     } else {

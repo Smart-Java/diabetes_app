@@ -75,7 +75,10 @@ class _AuthenticationSuccessMessageDialogWidgetState
                   padding: const EdgeInsets.only(bottom: 30.0),
                   child: Text(
                     widget.message,
-                    style: Theme.of(context).textTheme.bodyText2,
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      color: AppColors.primaryColor,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),

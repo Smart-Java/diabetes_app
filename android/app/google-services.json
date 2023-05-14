@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "620001804276",
+    "project_id": "diabetesmanagementsystem-71810",
+    "storage_bucket": "diabetesmanagementsystem-71810.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620001804276:android:961e5f4054c046acb3c3a1",
+        "android_client_info": {
+          "package_name": "com.example.diabetes_care"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "620001804276-8vovnm2kmvfglmo95cdernjfpnt6bkj5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCs59vHz8qzE9yTs07d0sFq2A7eFuDBUkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620001804276-8vovnm2kmvfglmo95cdernjfpnt6bkj5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

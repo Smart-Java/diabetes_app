@@ -87,15 +87,17 @@ class ValidatePasswordForRegistrationAuthentication
 
 // ignore: must_be_immutable
 class RegisterAuthenticationEvent extends AuthenticationPageEvent {
-  String userName;
+  String fullName;
   String emailAddress;
   String password;
   String retypePassword;
+  String category;
   bool? loginState;
 
   RegisterAuthenticationEvent({
     required this.emailAddress,
-    required this.userName,
+    required this.fullName,
+    required this.category,
     this.loginState,
     required this.password,
     required this.retypePassword,
@@ -103,7 +105,8 @@ class RegisterAuthenticationEvent extends AuthenticationPageEvent {
 
   @override
   List<Object?> get props => [
-        userName,
+        fullName,
+        category,
         emailAddress,
         loginState,
         password,
@@ -168,5 +171,7 @@ class ResendVerificationEmailToUserAuthenticationEvent
   }) : super();
 
   @override
-  List<Object?> get props => [emailAddress,];
+  List<Object?> get props => [
+        emailAddress,
+      ];
 }

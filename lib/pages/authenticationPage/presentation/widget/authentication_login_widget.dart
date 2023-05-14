@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:diabetes_care/config/appRouterHandler/app_router.dart';
 import 'package:diabetes_care/pages/authenticationPage/presentation/widget/authenticationHeaderWidget/authentication_header_widget.dart';
 import 'package:diabetes_care/util/appUIConstant/app_ui_constant.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +76,8 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
 
         if (state.isAuthenticationRequestSuccessful == true) {
           var message = state.authenticationMessage as String;
+          var isItAPatient = state.isItAPatient!;
+          var userCategory = state.userCategory!;
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -82,7 +86,12 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
                 routeFunctionality: () {
                   Future.delayed(const Duration()).then((value) {
                     Navigator.pop(context);
-                  }).then((value) {});
+                  }).then((value) {
+                    if (isItAPatient == true) {
+                      context.router
+                          .replaceAll([const PatientDashboardRoute()]);
+                    }
+                  });
                 },
                 message: message,
                 title: 'Success',
@@ -113,152 +122,99 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
-                            bottom: 15.0,
+                            bottom: 30.0,
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Card(
-                                elevation: 2.0,
-                                shape: txtFieldBorder,
-                                child: TextField(
-                                  controller: emailAddressController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  enabled: !loading,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColors.textFieldFilledColor,
-                                    prefixIcon:
-                                        loginIconForm(icon: Icons.email),
-                                    hintText: 'Email',
-                                    border: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                  ),
-                                  onChanged: (value) {
-                                    if (emailAddressController
-                                            .text.isNotEmpty &&
-                                        isThereErrorForLoginEmailField ==
-                                            true) {
-                                      setState(() {
-                                        isThereErrorForLoginEmailField =
-                                            !isThereErrorForLoginEmailField;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        isThereErrorForLoginEmailField = false;
-                                      });
-                                    }
-                                    BlocProvider.of<AuthenticationPageBloc>(
-                                            context)
-                                        .add(
-                                      ValidateEmailAddressForRegistrationAuthentication(
-                                        emailAddress:
-                                            emailAddressController.text,
-                                        loginState: true,
-                                      ),
-                                    );
-                                  },
+                          child: TextField(
+                            controller: emailAddressController,
+                            keyboardType: TextInputType.emailAddress,
+                            enabled: !loading,
+                            decoration: InputDecoration(
+                              prefixIcon: loginIconForm(icon: Icons.email),
+                              hintText: 'Email',
+                              hintStyle: hintTextStyle,
+                              errorText: emailAddressController.text.isNotEmpty
+                                  ? emailAddressVerified == false
+                                      ? 'Enter a vaild email address'
+                                      : isThereErrorForLoginEmailField == true
+                                          ? 'Enter a vaild email address'
+                                          : null
+                                  : isThereErrorForLoginEmailField == true
+                                      ? 'Enter a vaild email address'
+                                      : null,
+                              errorStyle: errorTextStyle,
+                              border: textFieldBorder,
+                              disabledBorder: textFieldBorder,
+                              enabledBorder: textFieldBorder,
+                              focusedBorder: textFieldBorder,
+                            ),
+                            onChanged: (value) {
+                              if (emailAddressController.text.isNotEmpty &&
+                                  isThereErrorForLoginEmailField == true) {
+                                setState(() {
+                                  isThereErrorForLoginEmailField =
+                                      !isThereErrorForLoginEmailField;
+                                });
+                              } else {
+                                setState(() {
+                                  isThereErrorForLoginEmailField = false;
+                                });
+                              }
+                              BlocProvider.of<AuthenticationPageBloc>(context)
+                                  .add(
+                                ValidateEmailAddressForRegistrationAuthentication(
+                                  emailAddress: emailAddressController.text,
+                                  loginState: true,
                                 ),
-                              ),
-                              Align(
-                                alignment: AlignmentDirectional.topStart,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Text(
-                                    emailAddressController.text.isNotEmpty
-                                        ? emailAddressVerified == false
-                                            ? 'Enter a vaild email address'
-                                            : isThereErrorForLoginEmailField ==
-                                                    true
-                                                ? 'Enter a vaild email address'
-                                                : ''
-                                        : isThereErrorForLoginEmailField == true
-                                            ? 'Enter a vaild email address'
-                                            : '',
-                                    style: isThereErrorForLoginEmailField ==
-                                                true ||
-                                            emailAddressVerified == false
-                                        ? errorTextStyle
-                                        : const TextStyle(
-                                            fontSize: 14.0,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                              );
+                            },
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
-                            bottom: 15.0,
+                            bottom: 30.0,
                           ),
-                          child: Column(
-                            children: [
-                              Card(
-                                elevation: 2.0,
-                                shape: txtFieldBorder,
-                                child: TextField(
-                                  controller: passwordController,
-                                  keyboardType: TextInputType.text,
-                                  enabled: !loading,
-                                  obscureText: passwordShouldBeInvisible,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColors.textFieldFilledColor,
-                                    prefixIcon: loginIconForm(icon: Icons.lock),
-                                    hintText: 'Password',
-                                    border: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          passwordShouldBeInvisible =
-                                              !passwordShouldBeInvisible;
-                                        });
-                                      },
-                                      icon: Icon(
-                                        passwordShouldBeInvisible == false
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color:
-                                            AppColors.passwordVisibilityColor,
-                                      ),
-                                    ),
-                                  ),
-                                  onChanged: (value) {
-                                    if (passwordController.text.isNotEmpty &&
-                                        isThereErrorForLoginPasswordField ==
-                                            true) {
-                                      setState(() {
-                                        isThereErrorForLoginPasswordField =
-                                            !isThereErrorForLoginPasswordField;
-                                      });
-                                    }
-                                  },
+                          child: TextField(
+                            controller: passwordController,
+                            keyboardType: TextInputType.text,
+                            enabled: !loading,
+                            obscureText: passwordShouldBeInvisible,
+                            decoration: InputDecoration(
+                              prefixIcon: loginIconForm(icon: Icons.lock),
+                              hintText: 'Password',
+                              hintStyle: hintTextStyle,
+                              errorText:
+                                  isThereErrorForLoginPasswordField == true
+                                      ? 'Password is required'
+                                      : null,
+                              errorStyle: errorTextStyle,
+                              border: textFieldBorder,
+                              disabledBorder: textFieldBorder,
+                              enabledBorder: textFieldBorder,
+                              focusedBorder: textFieldBorder,
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    passwordShouldBeInvisible =
+                                        !passwordShouldBeInvisible;
+                                  });
+                                },
+                                icon: Icon(
+                                  passwordShouldBeInvisible == false
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: AppColors.passwordVisibilityColor,
                                 ),
                               ),
-                              Align(
-                                alignment: AlignmentDirectional.topStart,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Text(
-                                    isThereErrorForLoginPasswordField == true
-                                        ? 'Password is required'
-                                        : '',
-                                    style: isThereErrorForLoginPasswordField ==
-                                            true
-                                        ? errorTextStyle
-                                        : const TextStyle(
-                                            fontSize: 14.0,
-                                          ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
+                            onChanged: (value) {
+                              if (passwordController.text.isNotEmpty &&
+                                  isThereErrorForLoginPasswordField == true) {
+                                setState(() {
+                                  isThereErrorForLoginPasswordField =
+                                      !isThereErrorForLoginPasswordField;
+                                });
+                              }
+                            },
                           ),
                         ),
                       ],
