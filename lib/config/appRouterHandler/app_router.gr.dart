@@ -41,9 +41,13 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     GlucoseReadingRoute.name: (routeData) {
+      final args = routeData.argsAs<GlucoseReadingRouteArgs>();
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const GlucoseReadingPage(),
+        child: GlucoseReadingPage(
+          key: args.key,
+          dataReading: args.dataReading,
+        ),
       );
     },
     DoctorDashboardRoute.name: (routeData) {
@@ -68,6 +72,17 @@ class _$AppRouter extends RootStackRouter {
       return AdaptivePage<dynamic>(
         routeData: routeData,
         child: const CareTeamPage(),
+      );
+    },
+    DietDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<DietDetailsRouteArgs>();
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: DietDetailsPage(
+          key: args.key,
+          data: args.data,
+          title: args.title,
+        ),
       );
     },
     TestRoute.name: (routeData) {
@@ -107,9 +122,13 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     GlucoseReadingViewRoute.name: (routeData) {
+      final args = routeData.argsAs<GlucoseReadingViewRouteArgs>();
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const GlucoseReadingViewPage(),
+        child: GlucoseReadingViewPage(
+          key: args.key,
+          dataReading: args.dataReading,
+        ),
       );
     },
     PractitionerHomeRoute.name: (routeData) {
@@ -278,6 +297,10 @@ class _$AppRouter extends RootStackRouter {
           path: '/care-team-page',
         ),
         RouteConfig(
+          DietDetailsRoute.name,
+          path: '/diet-details-page',
+        ),
+        RouteConfig(
           TestRoute.name,
           path: '/test-page',
         ),
@@ -345,15 +368,38 @@ class PatientDashboardRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [GlucoseReadingPage]
-class GlucoseReadingRoute extends PageRouteInfo<void> {
-  const GlucoseReadingRoute({List<PageRouteInfo>? children})
-      : super(
+class GlucoseReadingRoute extends PageRouteInfo<GlucoseReadingRouteArgs> {
+  GlucoseReadingRoute({
+    Key? key,
+    required List<dynamic> dataReading,
+    List<PageRouteInfo>? children,
+  }) : super(
           GlucoseReadingRoute.name,
           path: '/glucose-reading-page',
+          args: GlucoseReadingRouteArgs(
+            key: key,
+            dataReading: dataReading,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'GlucoseReadingRoute';
+}
+
+class GlucoseReadingRouteArgs {
+  const GlucoseReadingRouteArgs({
+    this.key,
+    required this.dataReading,
+  });
+
+  final Key? key;
+
+  final List<dynamic> dataReading;
+
+  @override
+  String toString() {
+    return 'GlucoseReadingRouteArgs{key: $key, dataReading: $dataReading}';
+  }
 }
 
 /// generated route for
@@ -405,6 +451,45 @@ class CareTeamRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'CareTeamRoute';
+}
+
+/// generated route for
+/// [DietDetailsPage]
+class DietDetailsRoute extends PageRouteInfo<DietDetailsRouteArgs> {
+  DietDetailsRoute({
+    Key? key,
+    required String data,
+    required String title,
+  }) : super(
+          DietDetailsRoute.name,
+          path: '/diet-details-page',
+          args: DietDetailsRouteArgs(
+            key: key,
+            data: data,
+            title: title,
+          ),
+        );
+
+  static const String name = 'DietDetailsRoute';
+}
+
+class DietDetailsRouteArgs {
+  const DietDetailsRouteArgs({
+    this.key,
+    required this.data,
+    required this.title,
+  });
+
+  final Key? key;
+
+  final String data;
+
+  final String title;
+
+  @override
+  String toString() {
+    return 'DietDetailsRouteArgs{key: $key, data: $data, title: $title}';
+  }
 }
 
 /// generated route for
@@ -481,14 +566,37 @@ class ProfileRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [GlucoseReadingViewPage]
-class GlucoseReadingViewRoute extends PageRouteInfo<void> {
-  const GlucoseReadingViewRoute()
-      : super(
+class GlucoseReadingViewRoute
+    extends PageRouteInfo<GlucoseReadingViewRouteArgs> {
+  GlucoseReadingViewRoute({
+    Key? key,
+    required List<dynamic> dataReading,
+  }) : super(
           GlucoseReadingViewRoute.name,
           path: 'glucose-reading-view-page',
+          args: GlucoseReadingViewRouteArgs(
+            key: key,
+            dataReading: dataReading,
+          ),
         );
 
   static const String name = 'GlucoseReadingViewRoute';
+}
+
+class GlucoseReadingViewRouteArgs {
+  const GlucoseReadingViewRouteArgs({
+    this.key,
+    required this.dataReading,
+  });
+
+  final Key? key;
+
+  final List<dynamic> dataReading;
+
+  @override
+  String toString() {
+    return 'GlucoseReadingViewRouteArgs{key: $key, dataReading: $dataReading}';
+  }
 }
 
 /// generated route for

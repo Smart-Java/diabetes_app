@@ -61,7 +61,7 @@ class CustomCareListItemWidget extends StatelessWidget {
                     ),
                     customTextWidget(
                       color: AppColors.secondaryColor,
-                      fontSize: 13.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.w700,
                       text: position,
                     ),

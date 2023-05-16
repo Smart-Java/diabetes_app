@@ -51,9 +51,14 @@ class AuthenticationPageBloc
 
         if (requestResponse!.status == true) {
           var userData = requestResponse.data!;
-          debugPrint(userData.toString());
-          isItAPatient = userData['isItAPatient'];
-          userCategory = userData['category'];
+          List userLists = userData['users'];
+          for (var userListElement in userLists) {
+            if (userListElement['email'] == emailAddress) {
+              debugPrint(userData.toString());
+              isItAPatient = userListElement['isItAPatient'];
+              userCategory = userListElement['category'];
+            }
+          }
         }
 
         var responseMessage = requestResponse.message;

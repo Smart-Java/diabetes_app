@@ -18,7 +18,7 @@ class AppColors {
   static const Color orangeColor = Color(0xFFECBB1A);
   static const Color navContainerColor = Color(0xFF40744D);
 
-  static const Color dividerColor = Color(0xFF000000);
+  static const Color dividerColor = Color(0xFFDADADA);
   static const Color redColor = Color(0xFFF44336);
   static const Color greenColor = Color(0xFF4CAF50);
 
@@ -57,4 +57,6 @@ class AppColors {
   static const Color timeDesColor = Color(0xFFF9FAFC);
   static const Color popUpDropDownColor = Color(0xFF8F8E8F);
   static const Color patientPortifolioColor = Color(0xFFECBB1A);
+
+  static const Color reminderColor = Color(0XFFD9D9D9);
 }

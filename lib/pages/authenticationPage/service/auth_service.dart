@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diabetes_care/connectivityManager/connection_interface/connection.dart';
+import 'package:diabetes_care/localStorage/sharedPreferences/app_shared_preferences.dart';
 import 'package:diabetes_care/pages/authenticationPage/model/login_response_model.dart/login_response_model.dart';
 import 'package:diabetes_care/pages/authenticationPage/model/register_response_model.dart/register_response_model.dart';
+import 'package:diabetes_care/util/allUsersService/service/all_users_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
@@ -9,7 +11,13 @@ import 'package:injectable/injectable.dart';
 @injectable
 class AuthService {
   Connection connection;
-  AuthService({required this.connection});
+  AppSharedPreferences appSharedPreferences;
+  AllUsersService allUsersService;
+  AuthService({
+    required this.connection,
+    required this.appSharedPreferences,
+    required this.allUsersService,
+  });
 
   Future<LoginResponseModel?> loginUser({
     required String email,
@@ -17,13 +25,35 @@ class AuthService {
   }) async {
     LoginResponseModel responseModel;
     try {
-      var checkInternetConnection = await checkInternetConnectivity();
+      var checkInternetConnection = await connection.isInternetEnabled();
       if (checkInternetConnection == true) {
         var loginAuthUserResponse =
             await loginAuthUser(email: email, password: password);
         if (loginAuthUserResponse!.toLowerCase() == 'success') {
-          var userDataResponse = await getUser(email: email);
+          var userDataResponse = await allUsersService.getUsers();
           if (userDataResponse!.isNotEmpty) {
+            await appSharedPreferences.cacheAuthEmailAddress(email);
+            List users = userDataResponse['users'];
+            for (var userElement in users) {
+              debugPrint(userElement.toString());
+              await appSharedPreferences
+                  .cacheUserFullname(userElement['fullname']);
+              if (userElement['email'] == email) {
+                if (userElement['isItAPatient'] == true) {
+                  var patientDataResponse = await allUsersService.getPatients();
+                  debugPrint(patientDataResponse.toString());
+                  if (patientDataResponse!.isNotEmpty) {
+                    List patients = patientDataResponse['patientsList'];
+                    for (var patientElement in patients) {
+                      if (patientElement['email'] == email) {
+                        await appSharedPreferences.cachePatientAccessCode(
+                            patientElement['accessCode']);
+                      }
+                    }
+                  }
+                }
+              }
+            }
             responseModel = LoginResponseModel(
               message: 'Authentication successful!',
               status: true,
@@ -80,25 +110,37 @@ class AuthService {
   }) async {
     RegisterResponseModel registerResponseModel;
     try {
-      var networkConnectionResponse = await checkInternetConnectivity();
+      var networkConnectionResponse = await connection.isInternetEnabled();
       if (networkConnectionResponse == true) {
         var authUserResponse =
             await registerAuthUser(email: email, password: password);
         if (authUserResponse!.toLowerCase() == 'success') {
-          var addUserResponse = await addUser(
+          var addUserResponse = await allUsersService.addUser(
               fullName: fullName,
               category: category,
               isItAPatient: isItAPatient,
               email: email);
           if (addUserResponse == true) {
-            var addPatientResponse =
-                await addPatient(accessCode: '', email: email);
-            if (addPatientResponse == true) {
-              registerResponseModel = const RegisterResponseModel(
-                  message: 'Success registration!', status: true);
+            if (isItAPatient == true) {
+              var addPatientResponse = await allUsersService.addUpdatePatient(
+                  accessCode: '', email: email);
+              if (addPatientResponse == true) {
+                registerResponseModel = const RegisterResponseModel(
+                    message: 'Success registration!', status: true);
+              } else {
+                registerResponseModel = const RegisterResponseModel(
+                    message: 'Operation failed!', status: false);
+              }
             } else {
-              registerResponseModel = const RegisterResponseModel(
-                  message: 'Operation failed!', status: false);
+              var addPractitionerResponse = await allUsersService
+                  .addPractitioner(email: email, patientAccessCode: '');
+              if (addPractitionerResponse == true) {
+                registerResponseModel = const RegisterResponseModel(
+                    message: 'Success registration!', status: true);
+              } else {
+                registerResponseModel = const RegisterResponseModel(
+                    message: 'Operation failed!', status: false);
+              }
             }
           } else {
             registerResponseModel = const RegisterResponseModel(
@@ -142,63 +184,15 @@ class AuthService {
     }
   }
 
-  Future<bool?> addUser({
-    required String fullName,
-    required String category,
-    required bool isItAPatient,
-    required String email,
-  }) async {
-    try {
-      CollectionReference users = FirebaseFirestore.instance.collection('user');
-      await users.doc(email).set({
-        'email': email,
-        'fullName': fullName,
-        'isItAPatient': isItAPatient,
-        'category': category
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool?> addPatient({
-    required String accessCode,
-    required String email,
-  }) async {
+  Future<Map?> getUser() async {
     try {
       CollectionReference users =
-          FirebaseFirestore.instance.collection('patient');
-      await users.doc(email).set({'email': email, 'accessCode': accessCode});
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<Map?> getUser({
-    required String email,
-  }) async {
-    try {
-      CollectionReference users = FirebaseFirestore.instance.collection('user');
-      var snapshot = await users.doc(email).get();
+          FirebaseFirestore.instance.collection('userCollections');
+      var snapshot = await users.doc('userRecords').get();
       final data = snapshot.data() as Map<String, dynamic>;
       return data;
     } catch (e) {
       return {};
     }
-  }
-
-  Future<bool?> checkInternetConnectivity() async {
-    bool? isThereConnection;
-    try {
-      isThereConnection = await connection.isInternetEnabled();
-      debugPrint(isThereConnection.toString());
-    } catch (e) {
-      debugPrint(e.toString());
-      isThereConnection = false;
-    }
-
-    return isThereConnection;
   }
 }

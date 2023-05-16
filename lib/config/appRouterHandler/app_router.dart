@@ -4,8 +4,9 @@ import 'package:diabetes_care/pages/getStartedPage/get_started_page.dart';
 import 'package:diabetes_care/pages/patientPage/careTeamPage/care_team_page.dart';
 import 'package:diabetes_care/pages/patientPage/dashboardPage/patient_dashboard_page.dart';
 import 'package:diabetes_care/pages/patientPage/dietPage/diet_page.dart';
-import 'package:diabetes_care/pages/patientPage/glucose_reading_page.dart/glucose_reading_page.dart';
-import 'package:diabetes_care/pages/patientPage/glucose_reading_page.dart/widget/glucoseReadingViewPage/glucose_reading_view_page.dart';
+import 'package:diabetes_care/pages/patientPage/dietPage/widget/dietDetailsPage/diet_details_page.dart';
+import 'package:diabetes_care/pages/patientPage/glucoseReadingPage/glucose_reading_page.dart';
+import 'package:diabetes_care/pages/patientPage/glucoseReadingPage/widget/glucoseReadingViewPage/glucose_reading_view_page.dart';
 import 'package:diabetes_care/pages/patientPage/homePage/home_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/dashboard/care_giver_dashboard_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/dashboard/dietitian_dashboard_page.dart';
@@ -118,7 +119,11 @@ part 'app_router.gr.dart';
       page: CareTeamPage,
     ),
     AutoRoute(
+      page: DietDetailsPage,
+    ),
+    AutoRoute(
       page: TestPage,
+      // initial: true,
     ),
   ],
 )

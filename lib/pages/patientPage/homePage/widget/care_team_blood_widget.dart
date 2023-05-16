@@ -62,8 +62,9 @@ class CareTeamBloodWidget extends StatelessWidget {
             onTap: () async {
               await showDialog(
                 context: context,
+                barrierDismissible: false,
                 builder: (context) {
-                  return const BloodGlucoseWidget();
+                  return const BloodGlucoseWidegt();
                 },
               );
             },

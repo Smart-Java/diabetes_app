@@ -6,6 +6,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 @injectable
 class AppSharedPreferences {
+  Future cacheUserFullname(String fullname) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fullname', fullname);
+  }
+  
+  Future cachePatientAccessCode(String accessCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accessCode', accessCode);
+  }
+  
   Future cacheAuthEmailAddress(String email) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', email);
@@ -161,6 +171,18 @@ class AppSharedPreferences {
     final prefs = await SharedPreferences.getInstance();
     var email = prefs.getString('email');
     return email;
+  }
+  
+  Future readUserFullname() async {
+    final prefs = await SharedPreferences.getInstance();
+    var fullname = prefs.getString('fullname');
+    return fullname;
+  }
+  
+  Future readUserAccessCode() async {
+    final prefs = await SharedPreferences.getInstance();
+    var accessCode = prefs.getString('accessCode');
+    return accessCode;
   }
 
   Future readDeviceOnboarded() async {

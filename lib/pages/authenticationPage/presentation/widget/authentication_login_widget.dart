@@ -77,7 +77,7 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
         if (state.isAuthenticationRequestSuccessful == true) {
           var message = state.authenticationMessage as String;
           var isItAPatient = state.isItAPatient!;
-          var userCategory = state.userCategory!;
+          // var userCategory = state.userCategory!;
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -86,6 +86,7 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
                 routeFunctionality: () {
                   Future.delayed(const Duration()).then((value) {
                     Navigator.pop(context);
+                    
                   }).then((value) {
                     if (isItAPatient == true) {
                       context.router

@@ -1,49 +1,103 @@
 import 'package:diabetes_care/config/appColors/app_colors.dart';
+import 'package:diabetes_care/config/appShimmerEffect/app_shimmer_effect.dart';
+import 'package:diabetes_care/pages/patientPage/homePage/bloc/home_page_bloc.dart';
+import 'package:diabetes_care/pages/patientPage/homePage/bloc/state/home_page_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SummaryWidget extends StatelessWidget {
+class SummaryWidget extends StatefulWidget {
   const SummaryWidget({Key? key}) : super(key: key);
 
   @override
+  State<SummaryWidget> createState() => _SummaryWidgetState();
+}
+
+class _SummaryWidgetState extends State<SummaryWidget> {
+  double averageGlucoseValue = 0.0;
+  double highestGlucoseValue = 0.0;
+  double lowestGlucoseValue = 0.0;
+  bool isRequestInProgress = false;
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            giveConstantPaddingToChild(
-              child: const Text(
-                'How do you feel today? Here is a summary for the last 14 days',
-                style: TextStyle(
-                  color: AppColors.dashboardTextColor,
+    return BlocConsumer<HomePageBloc, HomePageState>(
+      listener: (context, state) {
+        if (state.lastTwoWeeksAvgGlucoseLevel != null && state.lastTwoWeeksAvgGlucoseLevel != 0.0) {
+          setState(() {
+            averageGlucoseValue = state.lastTwoWeeksAvgGlucoseLevel!;
+          });
+        }
+
+        if (state.lastTwoWeeksHighGlucoseLevel != null && state.lastTwoWeeksHighGlucoseLevel != 0.0) {
+          setState(() {
+            highestGlucoseValue = state.lastTwoWeeksHighGlucoseLevel!;
+          });
+        }
+
+        if (state.lastTwoWeeksLowGlucoseLevel != null && state.lastTwoWeeksLowGlucoseLevel != 0.0) {
+          setState(() {
+            lowestGlucoseValue = state.lastTwoWeeksLowGlucoseLevel!;
+          });
+        }
+
+        if (state.isLastTwoWeeksRequestInProgress == true) {
+          setState(() {
+            isRequestInProgress = state.isLastTwoWeeksRequestInProgress!;
+          });
+        } else {
+          if (state.isLastTwoWeeksRequestInProgress == false) {
+            setState(() {
+              isRequestInProgress = state.isLastTwoWeeksRequestInProgress!;
+            });
+          }
+        }
+      },
+      builder: (context, state) {
+        return Card(
+          elevation: 5.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                giveConstantPaddingToChild(
+                  child: const Text(
+                    'How do you feel today? Here is a summary for the last 14 days',
+                    style: TextStyle(
+                      color: AppColors.dashboardTextColor,
+                    ),
+                  ),
                 ),
-              ),
+                isRequestInProgress == false
+                    ? rowItemChild(
+                        isItBad: averageGlucoseValue < 5.0 ? true : false,
+                        title: 'Average',
+                        unit: 'mg/dL',
+                        unitValue: '$averageGlucoseValue',
+                      )
+                    : giveConstantPaddingToChild(child: const AppShimmerEffect.rectangular(height: 20.0)),
+                isRequestInProgress == false
+                    ? rowItemChild(
+                        isItBad: false,
+                        title: 'Lowest Value.',
+                        unit: 'mg/dL',
+                        unitValue: '$lowestGlucoseValue',
+                      )
+                    : giveConstantPaddingToChild(child: const AppShimmerEffect.rectangular(height: 20.0)),
+                isRequestInProgress == false
+                    ? rowItemChild(
+                        isItBad: false,
+                        title: 'Highest Value.',
+                        unit: 'mg/dL',
+                        unitValue: '$highestGlucoseValue',
+                      )
+                    : giveConstantPaddingToChild(child: const AppShimmerEffect.rectangular(height: 20.0)),
+              ],
             ),
-            rowItemChild(
-              isItBad: true,
-              title: 'Average',
-              unit: 'mg/dL',
-              unitValue: '6.2',
-            ),
-            rowItemChild(
-              isItBad: false,
-              title: 'Lowest AVG.',
-              unit: 'mg/dL',
-              unitValue: '6.2',
-            ),
-            rowItemChild(
-              isItBad: false,
-              title: 'Highest AVG.',
-              unit: 'mg/dL',
-              unitValue: '6.2',
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

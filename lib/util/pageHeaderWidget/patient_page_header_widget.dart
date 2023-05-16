@@ -11,7 +11,7 @@ class PatientPageHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 170.0,
+      height: 150.0,
       decoration: const BoxDecoration(
         color: AppColors.primaryColor,
       ),

@@ -2,10 +2,12 @@ import 'package:diabetes_care/config/appColors/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePageCustomItemWidget extends StatelessWidget {
-  final String text;
+  final String title;
+  final String description;
   const ProfilePageCustomItemWidget({
     Key? key,
-    required this.text,
+    required this.title,
+    required this.description,
   }) : super(key: key);
 
   @override
@@ -19,14 +21,31 @@ class ProfilePageCustomItemWidget extends StatelessWidget {
         padding: const EdgeInsets.all(15.0),
         child: SizedBox(
           width: double.infinity,
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: AppColors.dashboardTextColor,
-              fontSize: 16.0,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: AppColors.dashboardTextColor,
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: AlignmentDirectional.center,
+                  child: Text(
+                    description,
+                    style: const TextStyle(
+                      color: AppColors.secondaryColor,
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.clip,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
