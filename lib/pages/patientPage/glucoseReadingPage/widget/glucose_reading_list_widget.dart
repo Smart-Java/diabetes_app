@@ -58,7 +58,7 @@ class _GlucoseReadingListWidetState extends State<GlucoseReadingListWidet> {
                   itemCount: glucoseReadingList.length,
                   itemBuilder: (context, index) {
                     String imagePath = '';
-                    String time = '09 : 35';
+                    String time = glucoseReadingList[index]['time'];
                     bool isThisItemForToday = false;
                     bool isItBad = false;
                     bool isItNormal = false;
@@ -79,14 +79,14 @@ class _GlucoseReadingListWidetState extends State<GlucoseReadingListWidet> {
                       }
                     }
 
-                    if (glucoseReadingList[index]['time'] != null &&
-                        glucoseReadingList[index]['time']!.isNotEmpty) {
-                      DateTime lastDateTime =
-                          DateTime.parse(glucoseReadingList[index]['time']!);
-                      TimeOfDay timeOfDay =
-                          TimeOfDay.fromDateTime(lastDateTime);
-                      time = timeOfDay.format(context);
-                    }
+                    // if (glucoseReadingList[index]['time'] != null &&
+                    //     glucoseReadingList[index]['time']!.isNotEmpty) {
+                    //   DateTime lastDateTime =
+                    //       DateTime.parse(glucoseReadingList[index]['time']!);
+                    //   TimeOfDay timeOfDay =
+                    //       TimeOfDay.fromDateTime(lastDateTime);
+                    //   time = timeOfDay.format(context);
+                    // }
 
                     if (glucoseReadingList[index]['rating']
                             .toString()

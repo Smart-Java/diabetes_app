@@ -24,9 +24,7 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
     'Daily',
   ];
 
-  List<String> timeList = [
-    '',
-  ];
+  List<String> timeList = [];
   String reminderChoiceValue = '';
 
   String selectedDate = '';
@@ -46,6 +44,8 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
   String selectedTime = '';
 
   String errorSuccessText = '';
+
+  Size deviceSize = const Size(0, 0);
 
   @override
   void initState() {
@@ -68,16 +68,20 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    setState(() {
+      deviceSize = size;
+    });
     return BlocConsumer<ReminderPageBloc, ReminderPageState>(
       listener: (context, state) {
         if (state.isAddRequestInProgress == true) {
           setState(() {
-            isRequestInProgress = true;
+            isRequestInProgress = state.isAddRequestInProgress!;
           });
         } else {
           if (state.isAddRequestInProgress == false) {
             setState(() {
-              isRequestInProgress = true;
+              isRequestInProgress = state.isAddRequestInProgress!;
             });
           }
         }
@@ -92,6 +96,8 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
           setState(() {
             isRequestSuccessful = true;
           });
+          Navigator.pop(context);
+          displayMessage(context, state.requestMessage!);
         }
       },
       builder: (context, state) {
@@ -100,6 +106,7 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
             return false;
           },
           child: AlertDialog(
+            contentPadding: const EdgeInsets.all(15.0),
             title: Padding(
               padding: const EdgeInsets.only(
                 top: 0.0,
@@ -152,213 +159,210 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
               ),
             ),
             content: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: AlignmentDirectional.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(
-                          errorSuccessText,
-                          style: TextStyle(
-                            color: isRequestSuccessful == true
-                                ? AppColors.greenColor
-                                : AppColors.redColor,
-                            fontSize: 14.00,
-                            fontWeight: FontWeight.w600,
-                          ),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: AlignmentDirectional.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(
+                        errorSuccessText,
+                        style: TextStyle(
+                          color: isRequestSuccessful == true
+                              ? AppColors.greenColor
+                              : AppColors.redColor,
+                          fontSize: 14.00,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    choiceCardWidget(
-                      child: TextField(
-                        controller: reminderController,
-                        decoration: const InputDecoration(
-                          hintText: 'Reminder',
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                        ),
-                      ),
-                      isIconRequired: true,
-                    ),
-                    choiceCardWidget(
-                      child: DropdownButtonFormField(
-                        items: reminderModeList.map((String choice) {
-                          return DropdownMenuItem(
-                              value: choice,
-                              child: Text(
-                                choice,
-                                style: const TextStyle(
-                                  color: AppColors.popUpDropDownColor,
-                                ),
-                              ));
-                        }).toList(),
-                        onChanged: (value) {
-                          var newChoiceValue = value as String;
-
-                          setState(() {
-                            if (newChoiceValue.isNotEmpty &&
-                                isThereErrorForReminderModeField == true) {
-                              isThereErrorForReminderModeField =
-                                  !isThereErrorForReminderModeField;
-                            }
-                            reminderChoiceValue = newChoiceValue;
-                          });
-                        },
-                        value: reminderChoiceValue,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.all(10.0),
-                          filled: true,
-                          fillColor: AppColors.textFieldFilledColor,
-                        ),
-                      ),
-                      isIconRequired: false,
-                    ),
-                    choiceCardWidget(
-                      child: TextField(
-                        keyboardType: TextInputType.text,
-                        controller: selectedDateController,
-                        onTap: () {
-                          _selectDate();
-                        },
-                        readOnly: true,
-                        onChanged: (value) {
-                          if (selectedDateController.text.isNotEmpty &&
-                              isThereErrorInDateSelection == true) {
-                            setState(() {
-                              isThereErrorInDateSelection =
-                                  !isThereErrorInDateSelection;
-                            });
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Select Date',
-                          suffixIcon: IconButton(
-                            onPressed: () async {
-                              _selectDate();
-                            },
-                            icon: const Icon(
-                              Icons.calendar_month,
-                              color: AppColors.textFieldBorderColor,
-                            ),
-                          ),
-                          errorText: isThereErrorInDateSelection == true
-                              ? 'Select date'
-                              : null,
-                          errorStyle: errorTextStyle,
-                          hintStyle: const TextStyle(
-                            color: AppColors.blackColor,
-                          ),
-                          filled: true,
-                          fillColor: AppColors.textFieldFilledColor,
-                          border: dateTextFieldBorder,
-                          focusedBorder: dateTextFieldBorder,
-                          enabledBorder: dateTextFieldBorder,
-                          disabledBorder: dateTextFieldBorder,
-                        ),
-                      ),
-                      isIconRequired: false,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 10.0),
-                      child: Align(
-                        alignment: AlignmentDirectional.topStart,
-                        child: Text(
-                          'Time',
-                          style: TextStyle(
-                            color: AppColors.blackColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20.0,
-                          ),
-                        ),
+                  ),
+                  choiceCardWidget(
+                    child: TextField(
+                      controller: reminderController,
+                      decoration: const InputDecoration(
+                        hintText: 'Reminder',
+                        border: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
                       ),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: isRequestInProgress == false
-                                ? () {
-                                    setState(() {
-                                      isMorningHoursSelected = true;
-                                      selectedTime = '${timeList[0]} AM';
-                                    });
-                                  }
-                                : null,
-                            child: dayModeWidget(
-                              isItMorning: true,
-                              color: isMorningHoursSelected == true
-                                  ? AppColors.secondaryColor
-                                  : AppColors.secondaryColor.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20.0,
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: isRequestInProgress == false
-                                ? () {
-                                    setState(() {
-                                      isMorningHoursSelected = false;
-                                      selectedTime = '${timeList[0]} PM';
-                                    });
-                                  }
-                                : null,
-                            child: dayModeWidget(
-                              isItMorning: false,
-                              color: isMorningHoursSelected == false
-                                  ? AppColors.secondaryColor
-                                  : AppColors.secondaryColor.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: timeSchedules(context: context),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0,
-                        vertical: 10.0,
-                      ),
-                      child: GestureDetector(
-                        onTap: isRequestInProgress == false
-                            ? () {
-                                validateRequiredFields(context: context);
-                              }
-                            : null,
-                        child: Container(
-                          height: 50.0,
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryColor,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          child: Center(
+                    isIconRequired: true,
+                  ),
+                  choiceCardWidget(
+                    child: DropdownButtonFormField(
+                      items: reminderModeList.map((String choice) {
+                        return DropdownMenuItem(
+                            value: choice,
                             child: Text(
-                              isRequestInProgress == true
-                                  ? 'Processing'
-                                  : 'Add',
-                              style: Theme.of(context).textTheme.button,
-                            ),
+                              choice,
+                              style: const TextStyle(
+                                color: AppColors.popUpDropDownColor,
+                              ),
+                            ));
+                      }).toList(),
+                      onChanged: (value) {
+                        var newChoiceValue = value as String;
+
+                        setState(() {
+                          if (newChoiceValue.isNotEmpty &&
+                              isThereErrorForReminderModeField == true) {
+                            isThereErrorForReminderModeField =
+                                !isThereErrorForReminderModeField;
+                          }
+                          reminderChoiceValue = newChoiceValue;
+                        });
+                      },
+                      value: reminderChoiceValue,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.all(10.0),
+                        filled: true,
+                        fillColor: AppColors.textFieldFilledColor,
+                      ),
+                    ),
+                    isIconRequired: false,
+                  ),
+                  choiceCardWidget(
+                    child: TextField(
+                      keyboardType: TextInputType.text,
+                      controller: selectedDateController,
+                      onTap: () {
+                        _selectDate();
+                      },
+                      readOnly: true,
+                      onChanged: (value) {
+                        if (selectedDateController.text.isNotEmpty &&
+                            isThereErrorInDateSelection == true) {
+                          setState(() {
+                            isThereErrorInDateSelection =
+                                !isThereErrorInDateSelection;
+                          });
+                        }
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Select Date',
+                        suffixIcon: IconButton(
+                          onPressed: () async {
+                            _selectDate();
+                          },
+                          icon: const Icon(
+                            Icons.calendar_month,
+                            color: AppColors.textFieldBorderColor,
+                          ),
+                        ),
+                        errorText: isThereErrorInDateSelection == true
+                            ? 'Select date'
+                            : null,
+                        errorStyle: errorTextStyle,
+                        hintStyle: const TextStyle(
+                          color: AppColors.blackColor,
+                        ),
+                        filled: true,
+                        fillColor: AppColors.textFieldFilledColor,
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                      ),
+                    ),
+                    isIconRequired: false,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10.0),
+                    child: Align(
+                      alignment: AlignmentDirectional.topStart,
+                      child: Text(
+                        'Time',
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: isRequestInProgress == false
+                              ? () {
+                                  setState(() {
+                                    isMorningHoursSelected = true;
+                                    selectedTime = '${timeList[0]} AM';
+                                  });
+                                }
+                              : null,
+                          child: dayModeWidget(
+                            isItMorning: true,
+                            color: isMorningHoursSelected == true
+                                ? AppColors.secondaryColor
+                                : AppColors.secondaryColor.withOpacity(0.5),
                           ),
                         ),
                       ),
-                    )
-                  ],
-                ),
+                      const SizedBox(
+                        width: 20.0,
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: isRequestInProgress == false
+                              ? () {
+                                  setState(() {
+                                    isMorningHoursSelected = false;
+                                    selectedTime = '${timeList[0]} PM';
+                                  });
+                                }
+                              : null,
+                          child: dayModeWidget(
+                            isItMorning: false,
+                            color: isMorningHoursSelected == false
+                                ? AppColors.secondaryColor
+                                : AppColors.secondaryColor.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: timeSchedules(context: context),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 10.0,
+                    ),
+                    child: GestureDetector(
+                      onTap: isRequestInProgress == false
+                          ? () {
+                              validateRequiredFields(context: context);
+                            }
+                          : null,
+                      child: Container(
+                        height: 50.0,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryColor,
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: Center(
+                          child: Text(
+                            isRequestInProgress == true
+                                ? 'Processing...'
+                                : 'Add',
+                            style: Theme.of(context).textTheme.button,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -371,10 +375,12 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
+      itemCount: timeList.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
+        childAspectRatio: 3 / 2,
         crossAxisSpacing: 2.0,
-        mainAxisSpacing: 3.0,
+        mainAxisSpacing: 2.0,
       ),
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -382,8 +388,8 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
             setState(() {
               selectedTimeIndex = index;
               selectedTime = isMorningHoursSelected == true
-                  ? '$timeList AM'
-                  : '$timeList PM';
+                  ? '${timeList[index]} AM'
+                  : '${timeList[index]} PM';
             });
           },
           child: Container(
@@ -401,14 +407,15 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
             child: Center(
               child: Text(
                 isMorningHoursSelected == true
-                    ? '$timeList AM'
-                    : '$timeList PM',
+                    ? '${timeList[index]} AM'
+                    : '${timeList[index]} PM',
                 style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                    color: selectedTimeIndex == index
-                        ? AppColors.whiteColor
-                        : AppColors.textColor),
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                  color: selectedTimeIndex == index
+                      ? AppColors.whiteColor
+                      : AppColors.textColor,
+                ),
               ),
             ),
           ),
@@ -437,6 +444,30 @@ class _NewReminderWidgetViewState extends State<NewReminderWidgetView> {
         reminderMode: reminderChoiceValue,
         time: selectedTime,
         title: reminderController.text,
+      ),
+    );
+  }
+
+  void displayMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(message),
+        ),
+        duration: const Duration(
+          seconds: 2,
+        ),
+        backgroundColor: AppColors.snackBarBackgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        margin: EdgeInsets.only(
+          bottom: deviceSize.height - 100,
+          right: 10.0,
+          left: 10.0,
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:diabetes_care/connectivityManager/connection_interface/connectio
 import 'package:diabetes_care/localStorage/sharedPreferences/app_shared_preferences.dart';
 import 'package:diabetes_care/pages/patientPage/recordPage/model/getRecordResponseModel/get_record_response_model.dart';
 import 'package:diabetes_care/pages/patientPage/recordPage/model/updateRecordResponseModel/update_record_response_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -106,27 +107,24 @@ class RecordPageService {
         int elementIndex = 0;
         for (var recordsListElement in recordsList) {
           if (recordsListElement['email'] == email) {
+            debugPrint('${recordsListElement['email']} $email');
             elementIndex = recordsList.indexOf(recordsListElement);
 
             recordsList[elementIndex] = {
-              'records': [
-                {
-                  'email': email,
-                  'records': {
-                    'cholesterolLevel': cholesterolLevel,
-                    'medications': medications,
-                    'weight': weight,
-                    'height': height,
-                    'physicalActivities': physicalActivities,
-                    'insulinUsage': insulinUsage,
-                  }
-                }
-              ],
+              'email': email,
+              'records': {
+                'cholesterolLevel': cholesterolLevel,
+                'medications': medications,
+                'weight': weight,
+                'height': height,
+                'physicalActivities': physicalActivities,
+                'insulinUsage': insulinUsage,
+              }
             };
           }
 
-          await records.doc('medicalRecords').set({
-            'recordsList': recordsList,
+          await records.doc('medicalRecords').update({
+            'records': recordsList,
           });
         }
       } else {
@@ -154,24 +152,24 @@ class RecordPageService {
 
   Future<Map?> getRecords() async {
     try {
-      String email = await appSharedPreferences.readAuthEmailAddress();
+      // String email = await appSharedPreferences.readAuthEmailAddress();
       CollectionReference records =
           FirebaseFirestore.instance.collection('recordCollections');
-      await records.doc('medicalRecords').set({
-        'records': [
-          {
-            'email': email,
-            'records': {
-              'cholesterolLevel': '10',
-              'medications': '10',
-              'weight': '40',
-              'height': '10',
-              'physicalActivities': '10',
-              'insulinUsage': '10',
-            }
-          }
-        ],
-      });
+      // await records.doc('medicalRecords').set({
+      //   'records': [
+      //     {
+      //       'email': email,
+      //       'records': {
+      //         'cholesterolLevel': '10',
+      //         'medications': '10',
+      //         'weight': '40',
+      //         'height': '10',
+      //         'physicalActivities': '10',
+      //         'insulinUsage': '10',
+      //       }
+      //     }
+      //   ],
+      // });
       var snapshot = await records.doc('medicalRecords').get();
       final data = snapshot.data() as Map<String, dynamic>;
       return data;

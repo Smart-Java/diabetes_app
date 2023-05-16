@@ -90,26 +90,29 @@ class ReminderPageService {
       String email = await appSharedPreferences.readAuthEmailAddress();
       CollectionReference reminders =
           FirebaseFirestore.instance.collection('reminderCollections');
-      var remindersSnapshot = await reminders.doc(email).get();
+      var remindersSnapshot = await reminders.doc('reminderRecords').get();
       final remindersRecordData =
           remindersSnapshot.data() as Map<String, dynamic>;
       if (remindersRecordData.isNotEmpty) {
         List remindersList = remindersRecordData['remindersList'];
         for (var remindersListElement in remindersList) {
           if (remindersListElement['email'] == email) {
-            remindersList.add({
-              'email': email,
-              'reminders': [
-                {
-                  'title': title,
-                  'date': date,
-                  'time': time,
-                  'reminderMode': reminderMode,
-                }
-              ]
+            List listToAdd = remindersListElement['reminders'];
+            debugPrint(listToAdd.toString());
+            listToAdd.add({
+              'title': title,
+              'date': date,
+              'time': time,
+              'reminderMode': reminderMode,
             });
+            debugPrint(listToAdd.toString());
             await reminders.doc('reminderRecords').set({
-              'remindersList': remindersList,
+              'remindersList': [
+                {
+                  'email': email,
+                  'reminders': listToAdd,
+                },
+              ]
             });
           }
         }
@@ -132,30 +135,31 @@ class ReminderPageService {
       }
       return true;
     } catch (e) {
+      debugPrint(e.toString());
       return false;
     }
   }
 
   Future<Map?> getReminders() async {
     try {
-      String email = await appSharedPreferences.readAuthEmailAddress();
+      // String email = await appSharedPreferences.readAuthEmailAddress();
       CollectionReference reminders =
           FirebaseFirestore.instance.collection('reminderCollections');
-      await reminders.doc('reminderRecords').set({
-        'remindersList': [
-          {
-            'email': email,
-            'reminders': [
-              {
-                'title': 'Wake up',
-                'date': DateTime.now().toIso8601String(),
-                'time': DateTime.now().toIso8601String(),
-                'reminderMode': 'Repeat',
-              }
-            ]
-          },
-        ]
-      });
+      // await reminders.doc('reminderRecords').set({
+      //   'remindersList': [
+      //     {
+      //       'email': email,
+      //       'reminders': [
+      //         {
+      //           'title': 'Wake up',
+      //           'date': DateTime.now().toIso8601String(),
+      //           'time': DateTime.now().toIso8601String(),
+      //           'reminderMode': 'Repeat',
+      //         }
+      //       ]
+      //     },
+      //   ]
+      // });
       var snapshot = await reminders.doc('reminderRecords').get();
       final data = snapshot.data() as Map<String, dynamic>;
       debugPrint(data.toString());

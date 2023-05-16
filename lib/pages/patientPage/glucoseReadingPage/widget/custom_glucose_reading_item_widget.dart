@@ -45,7 +45,7 @@ class CustomGlucoseReadingItemWidget extends StatelessWidget {
                     date,
                     style: const TextStyle(
                       color: AppColors.whiteColor,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.bold,
                       fontSize: 16.0,
                       fontStyle: FontStyle.italic,
                     ),
@@ -163,7 +163,7 @@ class CustomGlucoseReadingItemWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: isThereAnyUnit == true ? 10.0 : 40.0,
+                width: isThereAnyUnit == true ? 10.0 : 20.0,
               ),
               Row(
                 children: [
@@ -199,8 +199,9 @@ class CustomGlucoseReadingItemWidget extends StatelessWidget {
                                     ? AppColors.greenColor
                                     : AppColors.secondaryColor,
                             fontWeight: FontWeight.w700,
-                            fontSize: 16.0,
+                            fontSize: 14.0,
                           ),
+                          overflow: TextOverflow.clip,
                         ),
                 ],
               ),

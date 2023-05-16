@@ -131,18 +131,7 @@ class _AuthenticationRegisterWidgetState
               barrierDismissible: false,
               builder: (context) {
                 return AuthenticationSuccessMessageDialogWidgetView(
-                  isItForRoutingToANewPage: false,
-                  routeFunctionality: () {
-                    Future.delayed(const Duration()).then((value) {
-                      Navigator.pop(context);
-                    }).then((value) {
-                      BlocProvider.of<AuthenticationPageBloc>(context).add(
-                        ChangeAuthenticationStateEvent(
-                          changeToLoginState: true,
-                        ),
-                      );
-                    });
-                  },
+                  isItForRoutingToANewPage: true,
                   message: message,
                   title: 'Success',
                 );

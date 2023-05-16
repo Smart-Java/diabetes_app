@@ -30,45 +30,48 @@ class _HomePageViewWidgetState extends State<HomePageViewWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<HomePageBloc, HomePageState>(
       builder: (context, state) {
-        return Stack(
-          children: [
-            Align(
-              alignment: AlignmentDirectional.topStart,
-              child: PatientPageHeaderWidget(
-                childWidget: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 5.0,
-                        right: 10.0,
-                      ),
-                      child: Container(
-                        height: 40.0,
-                        width: 41.0,
-                        decoration: const BoxDecoration(
-                          color: AppColors.whiteColor,
-                          shape: BoxShape.circle,
+        return RefreshIndicator(
+          onRefresh: () async {},
+          child: Stack(
+            children: [
+              Align(
+                alignment: AlignmentDirectional.topStart,
+                child: PatientPageHeaderWidget(
+                  childWidget: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 5.0,
+                          right: 10.0,
                         ),
-                        child: const Icon(
-                          Icons.person,
-                          color: AppColors.primaryColor,
+                        child: Container(
+                          height: 40.0,
+                          width: 41.0,
+                          decoration: const BoxDecoration(
+                            color: AppColors.whiteColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.person,
+                            color: AppColors.primaryColor,
+                          ),
                         ),
                       ),
-                    ),
-                    Text(
-                      'Good Afternoon \n${state.userFullname}',
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    )
-                  ],
+                      Text(
+                        'Good Afternoon \n${state.userFullname}',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 150.0),
-              child: DashboardDetailsViewWidget(),
-            )
-          ],
+              const Padding(
+                padding: EdgeInsets.only(top: 150.0),
+                child: DashboardDetailsViewWidget(),
+              )
+            ],
+          ),
         );
       },
     );

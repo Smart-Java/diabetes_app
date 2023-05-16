@@ -36,8 +36,7 @@ class AuthService {
             List users = userDataResponse['users'];
             for (var userElement in users) {
               debugPrint(userElement.toString());
-              await appSharedPreferences
-                  .cacheUserFullname(userElement['fullname']);
+
               if (userElement['email'] == email) {
                 if (userElement['isItAPatient'] == true) {
                   var patientDataResponse = await allUsersService.getPatients();
@@ -48,6 +47,8 @@ class AuthService {
                       if (patientElement['email'] == email) {
                         await appSharedPreferences.cachePatientAccessCode(
                             patientElement['accessCode']);
+                        await appSharedPreferences
+                            .cacheUserFullname(userElement['fullname']);
                       }
                     }
                   }

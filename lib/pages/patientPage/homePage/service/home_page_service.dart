@@ -74,7 +74,8 @@ class HomePageService {
     try {
       var checkInternetConnection = await connection.isInternetEnabled();
       if (checkInternetConnection == true) {
-        var addGlAddGlucoseResponseModellucoseReadingResponse = await addNewGlucoseReadings(
+        var addGlAddGlucoseResponseModellucoseReadingResponse =
+            await addNewGlucoseReadings(
           description: description,
           glucoseValue: glucoseValue,
           rating: rating,
@@ -82,7 +83,7 @@ class HomePageService {
         );
         if (addGlAddGlucoseResponseModellucoseReadingResponse == true) {
           responseModel = const AddGlucoseResponseModel(
-            message: 'Reminder added successfully!',
+            message: 'Glucose value added successfully!',
             status: true,
           );
         } else {

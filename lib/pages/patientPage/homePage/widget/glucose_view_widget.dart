@@ -59,10 +59,11 @@ class _GlucoseViewWidgetState extends State<GlucoseViewWidget> {
 
         if (state.lastGlucoseTime != null &&
             state.lastGlucoseTime!.isNotEmpty) {
-          DateTime lastDateTime = DateTime.parse(state.lastGlucoseTime!);
-          TimeOfDay timeOfDay = TimeOfDay.fromDateTime(lastDateTime);
+          // DateTime lastDateTime = DateTime.parse(state.lastGlucoseTime!);
+          // TimeOfDay timeOfDay = TimeOfDay.fromDateTime(lastDateTime);
           setState(() {
-            time = timeOfDay.format(context);
+            time = state.lastGlucoseTime!;
+            // time = timeOfDay.format(context);
           });
         }
       },

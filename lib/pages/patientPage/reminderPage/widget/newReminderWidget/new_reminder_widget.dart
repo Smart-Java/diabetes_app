@@ -4,8 +4,8 @@ import 'package:diabetes_care/pages/patientPage/reminderPage/widget/newReminderW
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class NewReminderWidegt extends StatelessWidget {
-  const NewReminderWidegt({Key? key}) : super(key: key);
+class NewReminderWidget extends StatelessWidget {
+  const NewReminderWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:diabetes_care/pages/authenticationPage/bloc/event/authentication_page_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:diabetes_care/config/appColors/app_colors.dart';
@@ -77,7 +78,7 @@ class _AuthenticationSuccessMessageDialogWidgetState
                     widget.message,
                     style: const TextStyle(
                       fontSize: 18.0,
-                      color: AppColors.primaryColor,
+                      color: AppColors.blackColor,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -85,7 +86,17 @@ class _AuthenticationSuccessMessageDialogWidgetState
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10.0),
                   child: GestureDetector(
-                    onTap: widget.routeFunctionality,
+                    onTap: widget.isItForRoutingToANewPage == false
+                        ? widget.routeFunctionality
+                        : () {
+                            Future.delayed(const Duration()).then((value) {
+                              Navigator.pop(context);
+                            }).then((value) {
+                              BlocProvider.of<AuthenticationPageBloc>(context)
+                                  .add(ChangeAuthenticationStateEvent(
+                                      changeToLoginState: true));
+                            });
+                          },
                     child: alertMessageBtnFunctionality(),
                   ),
                 )

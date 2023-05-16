@@ -18,9 +18,7 @@ class _BloodGlucoseWidgetViewState extends State<BloodGlucoseWidgetView> {
   ];
   List<String> descriptionList = ['', 'Before Meal', 'Pre-Meal', 'Post-Meal'];
 
-  List<String> timeList = [
-    '',
-  ];
+  List<String> timeList = [];
 
   String glucoseChoiceValue = '';
   String descriptionChoiceValue = '';
@@ -39,6 +37,8 @@ class _BloodGlucoseWidgetViewState extends State<BloodGlucoseWidgetView> {
   String selectedTime = '';
 
   String errorSuccessText = '';
+
+  Size deviceSize = const Size(0, 0);
 
   @override
   void initState() {
@@ -66,16 +66,20 @@ class _BloodGlucoseWidgetViewState extends State<BloodGlucoseWidgetView> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    setState(() {
+      deviceSize = size;
+    });
     return BlocConsumer<HomePageBloc, HomePageState>(
       listener: (context, state) {
         if (state.isAddRequestInProgress == true) {
           setState(() {
-            isRequestInProgress = true;
+            isRequestInProgress = state.isAddRequestInProgress!;
           });
         } else {
           if (state.isAddRequestInProgress == false) {
             setState(() {
-              isRequestInProgress = true;
+              isRequestInProgress = state.isAddRequestInProgress!;
             });
           }
         }
@@ -90,6 +94,8 @@ class _BloodGlucoseWidgetViewState extends State<BloodGlucoseWidgetView> {
           setState(() {
             isRequestSuccessful = true;
           });
+          Navigator.pop(context);
+          displayMessage(context, state.requestMessage!);
         }
       },
       builder: (context, state) {
@@ -98,6 +104,7 @@ class _BloodGlucoseWidgetViewState extends State<BloodGlucoseWidgetView> {
             return false;
           },
           child: AlertDialog(
+            contentPadding: const EdgeInsets.all(15.0),
             title: Padding(
               padding: const EdgeInsets.only(
                 top: 0.0,
@@ -154,191 +161,188 @@ class _BloodGlucoseWidgetViewState extends State<BloodGlucoseWidgetView> {
             //   child: timeSchedules(context: context),
             // ),
             content: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: AlignmentDirectional.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(
-                          errorSuccessText,
-                          style: TextStyle(
-                            color: isRequestSuccessful == true
-                                ? AppColors.greenColor
-                                : AppColors.redColor,
-                            fontSize: 14.00,
-                            fontWeight: FontWeight.w600,
-                          ),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: AlignmentDirectional.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(
+                        errorSuccessText,
+                        style: TextStyle(
+                          color: isRequestSuccessful == true
+                              ? AppColors.greenColor
+                              : AppColors.redColor,
+                          fontSize: 14.00,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    choiceCardWidget(
-                      child: DropdownButtonFormField(
-                        items: glucoseList.map((String choice) {
-                          return DropdownMenuItem(
-                              value: choice,
-                              child: Text(
-                                choice,
-                                style: const TextStyle(
-                                  color: AppColors.popUpDropDownColor,
-                                ),
-                              ));
-                        }).toList(),
-                        onChanged: (value) {
-                          var newGlucoseChoiceValue = value as String;
-
-                          setState(() {
-                            if (newGlucoseChoiceValue.isNotEmpty &&
-                                isThereErrorForGlucoseField == true) {
-                              isThereErrorForGlucoseField =
-                                  !isThereErrorForGlucoseField;
-                            }
-                            glucoseChoiceValue = newGlucoseChoiceValue;
-                          });
-                        },
-                        value: glucoseChoiceValue,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.all(10),
-                          filled: true,
-                          fillColor: AppColors.textFieldFilledColor,
-                        ),
-                      ),
-                      iconData: Icons.water_drop_sharp,
-                    ),
-                    choiceCardWidget(
-                      child: DropdownButtonFormField(
-                        items: descriptionList.map((String choice) {
-                          return DropdownMenuItem(
-                              value: choice,
-                              child: Text(
-                                choice,
-                                style: const TextStyle(
-                                  color: AppColors.popUpDropDownColor,
-                                ),
-                              ));
-                        }).toList(),
-                        onChanged: (value) {
-                          var newDescriptionChoiceValue = value as String;
-
-                          setState(() {
-                            if (newDescriptionChoiceValue.isNotEmpty &&
-                                isThereErrorForDescriptionField == true) {
-                              isThereErrorForDescriptionField =
-                                  !isThereErrorForDescriptionField;
-                            }
-                            descriptionChoiceValue = newDescriptionChoiceValue;
-                          });
-                        },
-                        value: descriptionChoiceValue,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.all(10),
-                          filled: true,
-                          fillColor: AppColors.textFieldFilledColor,
-                        ),
-                      ),
-                      iconData: Icons.book,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 10.0),
-                      child: Align(
-                        alignment: AlignmentDirectional.topStart,
-                        child: Text(
-                          'Time',
-                          style: TextStyle(
-                            color: AppColors.blackColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: isRequestInProgress == false
-                                ? () {
-                                    setState(() {
-                                      isMorningHoursSelected = true;
-                                      selectedTime = '${timeList[0]} AM';
-                                    });
-                                  }
-                                : null,
-                            child: dayModeWidget(
-                              isItMorning: true,
-                              color: isMorningHoursSelected == true
-                                  ? AppColors.secondaryColor
-                                  : AppColors.secondaryColor.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20.0,
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: isRequestInProgress == false
-                                ? () {
-                                    setState(() {
-                                      isMorningHoursSelected = false;
-                                      selectedTime = '${timeList[0]} PM';
-                                    });
-                                  }
-                                : null,
-                            child: dayModeWidget(
-                              isItMorning: false,
-                              color: isMorningHoursSelected == false
-                                  ? AppColors.secondaryColor
-                                  : AppColors.secondaryColor.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: timeSchedules(context: context),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0,
-                        vertical: 10.0,
-                      ),
-                      child: GestureDetector(
-                        onTap: isRequestInProgress == false
-                            ? () {
-                                validateRequiredFields(context: context);
-                              }
-                            : null,
-                        child: Container(
-                          height: 50.0,
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryColor,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          child: Center(
+                  ),
+                  choiceCardWidget(
+                    child: DropdownButtonFormField(
+                      items: glucoseList.map((String choice) {
+                        return DropdownMenuItem(
+                            value: choice,
                             child: Text(
-                              isRequestInProgress == true
-                                  ? 'Processing'
-                                  : 'Save',
-                              style: Theme.of(context).textTheme.button,
-                            ),
+                              choice,
+                              style: const TextStyle(
+                                color: AppColors.popUpDropDownColor,
+                              ),
+                            ));
+                      }).toList(),
+                      onChanged: (value) {
+                        var newGlucoseChoiceValue = value as String;
+
+                        setState(() {
+                          if (newGlucoseChoiceValue.isNotEmpty &&
+                              isThereErrorForGlucoseField == true) {
+                            isThereErrorForGlucoseField =
+                                !isThereErrorForGlucoseField;
+                          }
+                          glucoseChoiceValue = newGlucoseChoiceValue;
+                        });
+                      },
+                      value: glucoseChoiceValue,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.all(10),
+                        filled: true,
+                        fillColor: AppColors.textFieldFilledColor,
+                      ),
+                    ),
+                    iconData: Icons.water_drop_sharp,
+                  ),
+                  choiceCardWidget(
+                    child: DropdownButtonFormField(
+                      items: descriptionList.map((String choice) {
+                        return DropdownMenuItem(
+                            value: choice,
+                            child: Text(
+                              choice,
+                              style: const TextStyle(
+                                color: AppColors.popUpDropDownColor,
+                              ),
+                            ));
+                      }).toList(),
+                      onChanged: (value) {
+                        var newDescriptionChoiceValue = value as String;
+
+                        setState(() {
+                          if (newDescriptionChoiceValue.isNotEmpty &&
+                              isThereErrorForDescriptionField == true) {
+                            isThereErrorForDescriptionField =
+                                !isThereErrorForDescriptionField;
+                          }
+                          descriptionChoiceValue = newDescriptionChoiceValue;
+                        });
+                      },
+                      value: descriptionChoiceValue,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.all(10),
+                        filled: true,
+                        fillColor: AppColors.textFieldFilledColor,
+                      ),
+                    ),
+                    iconData: Icons.book,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10.0),
+                    child: Align(
+                      alignment: AlignmentDirectional.topStart,
+                      child: Text(
+                        'Time',
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: isRequestInProgress == false
+                              ? () {
+                                  setState(() {
+                                    isMorningHoursSelected = true;
+                                    selectedTime = '${timeList[0]} AM';
+                                  });
+                                }
+                              : null,
+                          child: dayModeWidget(
+                            isItMorning: true,
+                            color: isMorningHoursSelected == true
+                                ? AppColors.secondaryColor
+                                : AppColors.secondaryColor.withOpacity(0.5),
                           ),
                         ),
                       ),
-                    )
-                  ],
-                ),
+                      const SizedBox(
+                        width: 20.0,
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: isRequestInProgress == false
+                              ? () {
+                                  setState(() {
+                                    isMorningHoursSelected = false;
+                                    selectedTime = '${timeList[0]} PM';
+                                  });
+                                }
+                              : null,
+                          child: dayModeWidget(
+                            isItMorning: false,
+                            color: isMorningHoursSelected == false
+                                ? AppColors.secondaryColor
+                                : AppColors.secondaryColor.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: timeSchedules(context: context),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 10.0,
+                    ),
+                    child: GestureDetector(
+                      onTap: isRequestInProgress == false
+                          ? () {
+                              validateRequiredFields(context: context);
+                            }
+                          : null,
+                      child: Container(
+                        height: 50.0,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryColor,
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: Center(
+                          child: Text(
+                            isRequestInProgress == true
+                                ? 'Processing...'
+                                : 'Add',
+                            style: Theme.of(context).textTheme.button,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
@@ -413,6 +417,30 @@ class _BloodGlucoseWidgetViewState extends State<BloodGlucoseWidgetView> {
         errorSuccessText = 'All fields are required';
       });
     }
+  }
+
+  void displayMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(message),
+        ),
+        duration: const Duration(
+          seconds: 2,
+        ),
+        backgroundColor: AppColors.snackBarBackgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        margin: EdgeInsets.only(
+          bottom: deviceSize.height - 100,
+          right: 10.0,
+          left: 10.0,
+        ),
+      ),
+    );
   }
 
   Future<void> submitNewGlucoseReading({required BuildContext context}) async {

@@ -46,7 +46,7 @@ class _ProfilePageFormWidgetState extends State<ProfilePageFormWidget> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(
-                      bottom: 15.0,
+                      bottom: 7.0,
                     ),
                     child: editProfile == true
                         ? Column(
@@ -100,11 +100,12 @@ class _ProfilePageFormWidgetState extends State<ProfilePageFormWidget> {
                                   : Container(),
                             ],
                           )
-                        :  ProfilePageCustomItemWidget(title: 'Name', description: fullname),
+                        : ProfilePageCustomItemWidget(
+                            title: 'Name', description: fullname),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                      bottom: 15.0,
+                      bottom: 7.0,
                     ),
                     child: editProfile == true
                         ? Column(
@@ -153,11 +154,12 @@ class _ProfilePageFormWidgetState extends State<ProfilePageFormWidget> {
                                   : Container(),
                             ],
                           )
-                        : ProfilePageCustomItemWidget(title: 'Email', description: email),
+                        : ProfilePageCustomItemWidget(
+                            title: 'Email', description: email),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                      bottom: 15.0,
+                      bottom: 7.0,
                     ),
                     child: editProfile == true
                         ? Column(
@@ -238,5 +240,3 @@ class _ProfilePageFormWidgetState extends State<ProfilePageFormWidget> {
     );
   }
 }
-
-

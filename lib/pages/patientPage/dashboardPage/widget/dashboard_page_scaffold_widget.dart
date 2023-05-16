@@ -126,8 +126,8 @@ class _DashboardPageScaffoldWidgetState
                 ],
               ),
             ),
-            floatingActionButton:
-                showFAB == true ? fabChildWidget() : Container(),
+            // floatingActionButton:
+            //     showFAB == true ? fabChildWidget() : Container(),
           );
         },
       ),

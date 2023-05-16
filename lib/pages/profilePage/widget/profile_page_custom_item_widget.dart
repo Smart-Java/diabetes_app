@@ -34,14 +34,17 @@ class ProfilePageCustomItemWidget extends StatelessWidget {
               Expanded(
                 child: Align(
                   alignment: AlignmentDirectional.center,
-                  child: Text(
-                    description,
-                    style: const TextStyle(
-                      color: AppColors.secondaryColor,
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      description,
+                      style: const TextStyle(
+                        color: AppColors.secondaryColor,
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.clip,
                     ),
-                    overflow: TextOverflow.clip,
                   ),
                 ),
               ),

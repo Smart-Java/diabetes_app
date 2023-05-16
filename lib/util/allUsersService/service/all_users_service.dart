@@ -227,7 +227,7 @@ class AllUsersService {
         //   }
         // });
 
-        List patientsList = patientsRecordData['patients'];
+        List patientsList = patientsRecordData['patientsList'];
         bool isThereAnyUserIn = false;
         int userIndex = 0;
         for (var patientElement in patientsList) {
@@ -324,7 +324,7 @@ class AllUsersService {
         bool isThereAnyUserIn = false;
         int userIndex = 0;
         for (var userElement in practitionerList) {
-          if (userElement['element'] == email) {
+          if (userElement['email'] == email) {
             isThereAnyUserIn = true;
             userIndex = practitionerList.indexOf(userElement);
           } else {

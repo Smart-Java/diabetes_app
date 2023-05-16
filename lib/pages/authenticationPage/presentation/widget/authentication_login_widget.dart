@@ -86,7 +86,6 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
                 routeFunctionality: () {
                   Future.delayed(const Duration()).then((value) {
                     Navigator.pop(context);
-                    
                   }).then((value) {
                     if (isItAPatient == true) {
                       context.router
@@ -96,7 +95,7 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
                 },
                 message: message,
                 title: 'Success',
-                isItForRoutingToANewPage: true,
+                isItForRoutingToANewPage: false,
               );
             },
           );

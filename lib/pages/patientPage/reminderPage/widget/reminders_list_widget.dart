@@ -45,14 +45,15 @@ class _RemindersListWidetState extends State<RemindersListWidet> {
               ? ListView.builder(
                   itemCount: remindersList.length,
                   itemBuilder: (context, index) {
+                    debugPrint(remindersList[index]['date']);
                     DateTime date =
                         DateTime.parse(remindersList[index]['date']);
-                    DateTime dateTimeForTime =
-                        DateTime.parse(remindersList[index]['time']);
-                    TimeOfDay time = TimeOfDay.fromDateTime(dateTimeForTime);
+                    // DateTime dateTimeForTime =
+                    //     DateTime.parse(remindersList[index]['time']);
+                    // TimeOfDay time = TimeOfDay.fromDateTime(dateTimeForTime);
                     return CustomReminderItemWidget(
                       date: '${date.day}-${date.month}-${date.year}',
-                      time: time.format(context),
+                      time: remindersList[index]['time'],
                       title: remindersList[index]['title'],
                       reminderMode: remindersList[index]['reminderMode'],
                     );

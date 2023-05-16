@@ -5,6 +5,7 @@ import 'package:diabetes_care/util/allUsersService/service/all_users_service.dar
 import 'package:diabetes_care/util/dietService/model/addDietResponseModel/add_diet_response_model.dart';
 import 'package:diabetes_care/util/dietService/model/dietRequestResponseModel/diet_request_response_model.dart';
 import 'package:diabetes_care/util/dietService/model/getDietResponseModel/get_diet_response_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -89,14 +90,14 @@ class DietService {
       var checkInternetConnection = await connection.isInternetEnabled();
       if (checkInternetConnection == true) {
         var dietRequestResponse = await requestForDiet();
-        if (dietRequestResponse == true) {
-          responseModel = const DietRequestResponseModel(
-            message: 'Diets retrieve successfully!',
+        if (dietRequestResponse!['status'] == true) {
+          responseModel = DietRequestResponseModel(
+            message: dietRequestResponse['message'],
             status: true,
           );
         } else {
-          responseModel = const DietRequestResponseModel(
-            message: 'Operation failed!',
+          responseModel = DietRequestResponseModel(
+            message: dietRequestResponse['message'],
             status: false,
           );
         }
@@ -137,18 +138,16 @@ class DietService {
           List dietsList = dietsRecordData['diets'];
           for (var dietsListElement in dietsList) {
             if (dietsListElement['email'] == email) {
-              dietsList.add({
-                'email': email,
-                'diets': [
-                  {
-                    'title': title,
-                    'date': date,
-                    'details': details,
-                  }
-                ]
+              List listToAdd = dietsListElement['diets'];
+              listToAdd.add({
+                'title': title,
+                'date': date,
+                'details': details,
               });
               await dietCollections.doc('dietRecords').set({
-                'diets': dietsList,
+                'diets': [
+                  {'email': email, 'diets': listToAdd}
+                ],
               });
             }
           }
@@ -202,66 +201,99 @@ class DietService {
     }
   }
 
-  Future<bool?> requestForDiet() async {
+  Future<Map?> requestForDiet() async {
+    Map data = {'status': false, 'message': 'Operation failed'};
+    // String message = 'Operation failed';
     try {
       String email = await appSharedPreferences.readAuthEmailAddress();
       final patientsRecordData = await allUsersService.getPatients();
       if (patientsRecordData!.isNotEmpty) {
-        List patientsList = patientsRecordData['patients'];
+        List patientsList = patientsRecordData['patientsList'];
         for (var patientsListElement in patientsList) {
           if (patientsListElement['email'] == email) {
             var doctorEmail = patientsListElement['doctorEmail'];
             var accessCode = patientsListElement['accessCode'];
-            final practitionerRecordData =
-                await allUsersService.getPractitioners();
-            if (practitionerRecordData!.isNotEmpty) {
-              CollectionReference practitioner = FirebaseFirestore.instance
-                  .collection('practitionerCollections');
-              List practitionerList =
-                  practitionerRecordData['practitionerList'];
-              for (var practitionerListElement in practitionerList) {
-                if ((practitionerListElement['email'] == doctorEmail) &&
-                    (practitionerListElement['patientAccessCode'] ==
-                        accessCode)) {
-                  if (practitionerListElement['request'].toString().isEmpty) {
-                    int indexElement =
-                        practitionerList.indexOf(practitionerListElement);
-                    practitionerList[indexElement] = {
-                      'email': doctorEmail,
-                      'dietRequests': [
-                        {
+            if (doctorEmail.toString().isNotEmpty &&
+                accessCode.toString().isNotEmpty) {
+              final practitionerRecordData =
+                  await allUsersService.getPractitioners();
+              if (practitionerRecordData!.isNotEmpty) {
+                CollectionReference practitioner = FirebaseFirestore.instance
+                    .collection('practitionerCollections');
+                List practitionerList =
+                    practitionerRecordData['practitionerList'];
+                for (var practitionerListElement in practitionerList) {
+                  List practitionerDietList =
+                      practitionerListElement['dietRequests'];
+                  for (var practionerDietElement in practitionerDietList) {
+                    debugPrint(
+                        '${practionerDietElement['patientAccessCode']} $accessCode ${practitionerListElement['email']} $doctorEmail');
+                    if ((practitionerListElement['email'] == doctorEmail) &&
+                        (practionerDietElement['patientAccessCode'] ==
+                            accessCode)) {
+                      if (practitionerListElement['request']
+                          .toString()
+                          .isEmpty) {
+                        int indexElement =
+                            practitionerDietList.indexOf(practionerDietElement);
+                        practitionerDietList[indexElement] = {
                           'patientAccessCode':
                               practitionerListElement['patientAccessCode'],
                           'request': '$email is requesting for diet',
-                        }
-                      ]
-                    };
-                    await practitioner.doc('practitionerRecords').update({
-                      'practitionerList': practitionerList,
-                    });
-                  } else {
-                    practitionerList.add({
-                      'email': doctorEmail,
-                      'dietRequests': [
-                        {
+                        };
+                        await practitioner.doc('practitionerRecords').update({
+                          'practitionerList': [
+                            {
+                              'email': doctorEmail,
+                              'dietRequests': practitionerDietList,
+                            }
+                          ]
+                        });
+                        data = {'status': true, 'message': 'Success'};
+                      } else {
+                        practitionerDietList.add({
                           'patientAccessCode': accessCode,
-                          'request': '',
-                        }
-                      ]
-                    });
-                    await practitioner.doc('practitionerRecords').set({
-                      'practitionerList': practitionerList,
-                    });
+                          'request': '$email is requesting for diet',
+                        });
+                        await practitioner.doc('practitionerRecords').set({
+                          'practitionerList': [
+                            {
+                              'email': doctorEmail,
+                              'dietRequests': practitionerDietList,
+                            }
+                          ]
+                        });
+
+                        data = {'status': true, 'message': 'Diet request sent successfully'};
+                      }
+                    } else {
+                      data = {
+                        'status': false,
+                        'message':
+                            'Your practitioner has a wrong access code of yours'
+                      };
+                    }
                   }
+                  // else {
+                  //   data = {
+                  //     'status': false,
+                  //     'message': 'Your practitioner has a wrong access code of yours'
+                  //   };
+                  // }
                 }
               }
+            } else {
+              data = {
+                'status': false,
+                'message': 'No access code assigned to a practitioner yet, request for one'
+              };
             }
           }
         }
       }
-      return true;
+      return data;
     } catch (e) {
-      return false;
+      return data;
     }
   }
 }
