@@ -137,24 +137,50 @@ class HomePageService {
 
       if (data.isNotEmpty) {
         List glucoseList = data['glucoseList'];
+        int elementIndex = 0;
+        bool isAThereAnyElement = false;
+        List readingDataList = [];
         for (var element in glucoseList) {
           if (element['email'] == email) {
-            List readingDataList = element['readings'];
-            readingDataList.add({
-              'glucoseValue': glucoseValue,
-              'rating': rating,
-              'description': description,
-              'date': DateTime.now().toIso8601String(),
-              'time': time,
-            });
+            isAThereAnyElement = true;
+            elementIndex = glucoseList.indexOf(element);
 
-            await addNewReading.doc('glucoseRecords').set({
-              'glucoseList': [
-                {'email': email, 'readings': readingDataList},
-              ]
-            });
+            readingDataList = element['readings'];
+          } else {
+            isAThereAnyElement = false;
           }
         }
+
+        if (isAThereAnyElement == true) {
+          readingDataList.add({
+            'glucoseValue': glucoseValue,
+            'rating': rating,
+            'description': description,
+            'date': DateTime.now().toIso8601String(),
+            'time': time,
+          });
+          glucoseList[elementIndex] = {
+            'email': email,
+            'readings': readingDataList
+          };
+        } else {
+          glucoseList.add({
+            'email': email,
+            'readings': [
+              {
+                'glucoseValue': glucoseValue,
+                'rating': rating,
+                'description': description,
+                'date': DateTime.now().toIso8601String(),
+                'time': time,
+              }
+            ]
+          });
+        }
+
+        await addNewReading.doc('glucoseRecords').update({
+          'glucoseList': glucoseList,
+        });
       } else {
         await addNewReading.doc('glucoseRecords').set({
           'glucoseList': [

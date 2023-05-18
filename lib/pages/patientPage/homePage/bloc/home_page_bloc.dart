@@ -100,35 +100,21 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
               lastGlucoseLevelReading = lastGlucoseReading['glucoseValue'];
               lastGlucoseRating = lastGlucoseReading['rating'];
               lastGlucoseRecordTime = lastGlucoseReading['time'];
-
-              emit(state.copyWith(
-                userFullname: fullname,
-                isLastReadingRequestInProgress: false,
-                isUserAuth: isUserAuth,
-                lastGlucoseRating: lastGlucoseRating,
-                lastGlucoseLevel: lastGlucoseLevelReading.toString(),
-                lastTwoWeeksAvgGlucoseLevel: lastTwoWeeksAvgGlucoseReading,
-                lastTwoWeeksLowGlucoseLevel: lastTwoWeeksLowGlucoseReading,
-                lastTwoWeeksHighGlucoseLevel: lastTwoWeeksHighGlucoseReading,
-                readingsDataList: readingsDataList,
-                lastGlucoseTime: lastGlucoseRecordTime,
-              ));
-            } else {
-              emit(state.copyWith(
-                userFullname: fullname,
-                isLastReadingRequestInProgress: false,
-                isUserAuth: isUserAuth,
-                lastGlucoseRating: lastGlucoseRating,
-                lastGlucoseLevel: lastGlucoseLevelReading.toString(),
-                lastTwoWeeksAvgGlucoseLevel: lastTwoWeeksAvgGlucoseReading,
-                lastTwoWeeksLowGlucoseLevel: lastTwoWeeksLowGlucoseReading,
-                lastTwoWeeksHighGlucoseLevel: lastTwoWeeksHighGlucoseReading,
-                readingsDataList: readingsDataList,
-                lastGlucoseTime: lastGlucoseRecordTime,
-              ));
             }
           }
         }
+        emit(state.copyWith(
+          userFullname: fullname,
+          isLastReadingRequestInProgress: false,
+          isUserAuth: isUserAuth,
+          lastGlucoseRating: lastGlucoseRating,
+          lastGlucoseLevel: lastGlucoseLevelReading.toString(),
+          lastTwoWeeksAvgGlucoseLevel: lastTwoWeeksAvgGlucoseReading,
+          lastTwoWeeksLowGlucoseLevel: lastTwoWeeksLowGlucoseReading,
+          lastTwoWeeksHighGlucoseLevel: lastTwoWeeksHighGlucoseReading,
+          readingsDataList: readingsDataList,
+          lastGlucoseTime: lastGlucoseRecordTime,
+        ));
       } else {
         emit(state.copyWith(
           userFullname: fullname,

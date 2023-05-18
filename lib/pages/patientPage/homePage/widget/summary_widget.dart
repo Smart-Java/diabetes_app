@@ -21,19 +21,22 @@ class _SummaryWidgetState extends State<SummaryWidget> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomePageBloc, HomePageState>(
       listener: (context, state) {
-        if (state.lastTwoWeeksAvgGlucoseLevel != null && state.lastTwoWeeksAvgGlucoseLevel != 0.0) {
+        if (state.lastTwoWeeksAvgGlucoseLevel != null &&
+            state.lastTwoWeeksAvgGlucoseLevel != 0.0) {
           setState(() {
             averageGlucoseValue = state.lastTwoWeeksAvgGlucoseLevel!;
           });
         }
 
-        if (state.lastTwoWeeksHighGlucoseLevel != null && state.lastTwoWeeksHighGlucoseLevel != 0.0) {
+        if (state.lastTwoWeeksHighGlucoseLevel != null &&
+            state.lastTwoWeeksHighGlucoseLevel != 0.0) {
           setState(() {
             highestGlucoseValue = state.lastTwoWeeksHighGlucoseLevel!;
           });
         }
 
-        if (state.lastTwoWeeksLowGlucoseLevel != null && state.lastTwoWeeksLowGlucoseLevel != 0.0) {
+        if (state.lastTwoWeeksLowGlucoseLevel != null &&
+            state.lastTwoWeeksLowGlucoseLevel != 0.0) {
           setState(() {
             lowestGlucoseValue = state.lastTwoWeeksLowGlucoseLevel!;
           });
@@ -74,9 +77,11 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                         isItBad: averageGlucoseValue < 5.0 ? true : false,
                         title: 'Average',
                         unit: 'mg/dL',
-                        unitValue: '$averageGlucoseValue',
+                        unitValue: averageGlucoseValue.toStringAsFixed(2),
                       )
-                    : giveConstantPaddingToChild(child: const AppShimmerEffect.rectangular(height: 20.0)),
+                    : giveConstantPaddingToChild(
+                        child:
+                            const AppShimmerEffect.rectangular(height: 20.0)),
                 isRequestInProgress == false
                     ? rowItemChild(
                         isItBad: false,
@@ -84,7 +89,9 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                         unit: 'mg/dL',
                         unitValue: '$lowestGlucoseValue',
                       )
-                    : giveConstantPaddingToChild(child: const AppShimmerEffect.rectangular(height: 20.0)),
+                    : giveConstantPaddingToChild(
+                        child:
+                            const AppShimmerEffect.rectangular(height: 20.0)),
                 isRequestInProgress == false
                     ? rowItemChild(
                         isItBad: false,
@@ -92,7 +99,9 @@ class _SummaryWidgetState extends State<SummaryWidget> {
                         unit: 'mg/dL',
                         unitValue: '$highestGlucoseValue',
                       )
-                    : giveConstantPaddingToChild(child: const AppShimmerEffect.rectangular(height: 20.0)),
+                    : giveConstantPaddingToChild(
+                        child:
+                            const AppShimmerEffect.rectangular(height: 20.0)),
               ],
             ),
           ),

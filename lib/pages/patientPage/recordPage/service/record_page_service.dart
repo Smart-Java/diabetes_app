@@ -105,28 +105,44 @@ class RecordPageService {
       if (recordsRecordData.isNotEmpty) {
         List recordsList = recordsRecordData['records'];
         int elementIndex = 0;
+        bool isThereAnyElement = false;
         for (var recordsListElement in recordsList) {
           if (recordsListElement['email'] == email) {
             debugPrint('${recordsListElement['email']} $email');
             elementIndex = recordsList.indexOf(recordsListElement);
-
-            recordsList[elementIndex] = {
-              'email': email,
-              'records': {
-                'cholesterolLevel': cholesterolLevel,
-                'medications': medications,
-                'weight': weight,
-                'height': height,
-                'physicalActivities': physicalActivities,
-                'insulinUsage': insulinUsage,
-              }
-            };
+            isThereAnyElement = true;
+          } else {
+            isThereAnyElement = false;
           }
-
-          await records.doc('medicalRecords').update({
-            'records': recordsList,
+        }
+        if (isThereAnyElement == true) {
+          recordsList[elementIndex] = {
+            'email': email,
+            'records': {
+              'cholesterolLevel': cholesterolLevel,
+              'medications': medications,
+              'weight': weight,
+              'height': height,
+              'physicalActivities': physicalActivities,
+              'insulinUsage': insulinUsage,
+            }
+          };
+        } else {
+          recordsList.add({
+            'email': email,
+            'records': {
+              'cholesterolLevel': cholesterolLevel,
+              'medications': medications,
+              'weight': weight,
+              'height': height,
+              'physicalActivities': physicalActivities,
+              'insulinUsage': insulinUsage,
+            }
           });
         }
+        await records.doc('medicalRecords').update({
+          'records': recordsList,
+        });
       } else {
         await records.doc('medicalRecords').set({
           'records': [

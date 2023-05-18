@@ -41,7 +41,8 @@ class ProfilePageService {
       bool checkInternetConnection = await connection.isInternetEnabled();
       if (checkInternetConnection == true) {
         var updateAccessCodeResponse = await updatePatientAccessCode();
-        if (updateAccessCodeResponse != null && updateAccessCodeResponse.isNotEmpty) {
+        if (updateAccessCodeResponse != null &&
+            updateAccessCodeResponse.isNotEmpty) {
           responseModel = NewAccessCodeResponseModel(
             data: updateAccessCodeResponse,
             message: 'Success',
@@ -73,7 +74,7 @@ class ProfilePageService {
 
   Future<String> generateNewCode() async {
     const uuid = Uuid();
-    return uuid.v1();
+    return uuid.v1().substring(0, 7);
   }
 
   Future<Map?> updatePatientAccessCode() async {

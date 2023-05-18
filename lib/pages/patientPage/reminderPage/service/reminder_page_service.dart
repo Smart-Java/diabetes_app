@@ -95,27 +95,49 @@ class ReminderPageService {
           remindersSnapshot.data() as Map<String, dynamic>;
       if (remindersRecordData.isNotEmpty) {
         List remindersList = remindersRecordData['remindersList'];
+        int elementIndex = 0;
+        bool isThereAnyElement = false;
+        List listToAdd = [];
         for (var remindersListElement in remindersList) {
           if (remindersListElement['email'] == email) {
-            List listToAdd = remindersListElement['reminders'];
+            listToAdd = remindersListElement['reminders'];
+            elementIndex = remindersList.indexOf(remindersListElement);
+            isThereAnyElement = true;
             debugPrint(listToAdd.toString());
-            listToAdd.add({
-              'title': title,
-              'date': date,
-              'time': time,
-              'reminderMode': reminderMode,
-            });
-            debugPrint(listToAdd.toString());
-            await reminders.doc('reminderRecords').set({
-              'remindersList': [
-                {
-                  'email': email,
-                  'reminders': listToAdd,
-                },
-              ]
-            });
+           
+          } else {
+            isThereAnyElement = false;
           }
         }
+        if (isThereAnyElement == true) {
+          listToAdd.add({
+            'title': title,
+            'date': date,
+            'time': time,
+            'reminderMode': reminderMode,
+          });
+          remindersList[elementIndex] = {
+            'email': email,
+            'reminders': listToAdd
+          };
+        } else {
+          remindersList.add(
+            {
+              'email': email,
+              'reminders': [
+                {
+                  'title': title,
+                  'date': date,
+                  'time': time,
+                  'reminderMode': reminderMode,
+                }
+              ]
+            },
+          );
+        }
+         await reminders.doc('reminderRecords').set({
+              'remindersList': remindersList,
+            });
       } else {
         await reminders.doc('reminderRecords').set({
           'remindersList': [

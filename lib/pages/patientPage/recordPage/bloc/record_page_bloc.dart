@@ -74,16 +74,15 @@ class RecordPageBloc extends Bloc<RecordPageEvent, RecordPageState> {
           for (var recordsElement in records) {
             if (recordsElement['email'] == email) {
               recordDataList = recordsElement['records'] ?? {};
-
-              emit(state.copyWith(
-                isLoading: false,
-                isListReady: true,
-                requestMessage: recordsRequestResponse.message,
-                recordDataList: recordDataList,
-              ));
             }
           }
         }
+        emit(state.copyWith(
+          isLoading: false,
+          isListReady: true,
+          requestMessage: recordsRequestResponse.message,
+          recordDataList: recordDataList,
+        ));
       } else {
         emit(state.copyWith(
           isLoading: false,

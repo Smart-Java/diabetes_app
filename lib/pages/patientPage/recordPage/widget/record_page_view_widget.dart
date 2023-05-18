@@ -138,7 +138,7 @@ class _RecordPageViewWidgetState extends State<RecordPageViewWidget> {
           ),
           showUpdateButton == false
               ? Container()
-              : widget.isItFromPatientsView == false
+              : widget.isItFromPatientsView == true
                   ? Align(
                       alignment: AlignmentDirectional.bottomCenter,
                       child: Padding(
