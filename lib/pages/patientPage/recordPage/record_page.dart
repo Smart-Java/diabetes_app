@@ -5,7 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RecordPage extends StatelessWidget {
-  const RecordPage({Key? key}) : super(key: key);
+  final bool isItFromPatientsView;
+  final String? praPatientEmailOnPraView;
+  const RecordPage({
+    Key? key,
+    required this.isItFromPatientsView,
+    this.praPatientEmailOnPraView,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,17 @@ class RecordPage extends StatelessWidget {
       right: false,
       child: BlocProvider(
         create: (context) => getIt<RecordPageBloc>(),
-        child: const RecordPageViewWidget(),
+        child: isItFromPatientsView == true
+            ? RecordPageViewWidget(
+                isItFromPatientsView: isItFromPatientsView,
+                praPatientEmailOnPraView: praPatientEmailOnPraView,
+              )
+            : Scaffold(
+                body: RecordPageViewWidget(
+                  isItFromPatientsView: isItFromPatientsView,
+                  praPatientEmailOnPraView: praPatientEmailOnPraView,
+                ),
+              ),
       ),
     );
   }

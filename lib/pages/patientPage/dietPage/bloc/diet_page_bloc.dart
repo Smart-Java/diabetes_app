@@ -28,9 +28,12 @@ class DietPageBloc extends Bloc<DietPageEvent, DietPageState> {
       ));
     });
     on<GetAllDietDietPageEvent>((event, emit) async {
-      emit(state.copyWith(
-        isLoading: true,
-      ));
+      if (event.isItForUpdate == false) {
+        emit(state.copyWith(
+          isLoading: true,
+        ));
+      }
+
       String email = await appSharedPreferences.readAuthEmailAddress();
       var dietRequestResponse = await dietService.getDietRequest();
       if (dietRequestResponse!.status == true) {

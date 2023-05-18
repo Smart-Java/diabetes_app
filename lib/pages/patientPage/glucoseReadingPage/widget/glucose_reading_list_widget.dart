@@ -1,3 +1,5 @@
+// ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart';
 import 'package:diabetes_care/config/appShimmerEffect/app_shimmer_effect.dart';
 import 'package:diabetes_care/pages/patientPage/glucoseReadingPage/widget/custom_glucose_reading_item_widget.dart';
 import 'package:diabetes_care/util/listNotReadyWidget/list_not_ready_widget.dart';
@@ -21,16 +23,20 @@ class _GlucoseReadingListWidetState extends State<GlucoseReadingListWidet> {
   String emptyGlucoseReadingList = 'No Glucose List yet!';
   List glucoseReadingList = [];
   List imagesToUse = [
-    'asset/images/glucoseLevel/mealIconOne.svg',
-    'asset/images/glucoseLevel/mealIconTwo.svg',
-    'asset/images/glucoseLevel/mealIconThree.svg',
-    'asset/images/glucoseLevel/mealIconFour.svg',
+    'asset/images/dietMeals/meal_1.png',
+    'asset/images/dietMeals/meal_2.png',
+    'asset/images/dietMeals/meal_3.png',
+    'asset/images/dietMeals/meal_4.png',
   ];
+
   @override
   void initState() {
     super.initState();
     setState(() {
-      glucoseReadingList = widget.dataReading;
+      List reversedReadingList =  widget.dataReading.reversed.toList();
+      glucoseReadingList = reversedReadingList;
+      
+      debugPrint('this is the glucose reading list $glucoseReadingList');
       if (glucoseReadingList.isNotEmpty) {
         glucoseReadingListReady = true;
       }
@@ -58,6 +64,7 @@ class _GlucoseReadingListWidetState extends State<GlucoseReadingListWidet> {
                   itemCount: glucoseReadingList.length,
                   itemBuilder: (context, index) {
                     String imagePath = '';
+                    String date = '';
                     String time = glucoseReadingList[index]['time'];
                     bool isThisItemForToday = false;
                     bool isItBad = false;
@@ -73,6 +80,9 @@ class _GlucoseReadingListWidetState extends State<GlucoseReadingListWidet> {
                         (glucoseDate.year == todayDate.year)) {
                       isThisItemForToday = true;
                     }
+
+                    date = DateFormat.yMMMMEEEEd().format(glucoseDate);
+
                     if (imagesToUse.isNotEmpty) {
                       for (var i = 0; i < 4; i++) {
                         imagePath = imagesToUse[i];
@@ -103,9 +113,7 @@ class _GlucoseReadingListWidetState extends State<GlucoseReadingListWidet> {
                     }
 
                     return CustomGlucoseReadingItemWidget(
-                      date: isThisItemForToday == true
-                          ? 'Today'
-                          : glucoseReadingList[index]['date'],
+                      date: isThisItemForToday == true ? 'Today' : date,
                       description: glucoseReadingList[index]['description'],
                       glucoseLevel: glucoseReadingList[index]['glucoseValue'],
                       imagePath: imagePath,

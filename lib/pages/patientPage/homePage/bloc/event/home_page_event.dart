@@ -14,18 +14,28 @@ class GetUserFullnameHomePageEvent extends HomePageEvent {
 
 // ignore: must_be_immutable
 class GetLastReadingHomePageEvent extends HomePageEvent {
-  const GetLastReadingHomePageEvent() : super();
+  bool isItForUpdate;
+  GetLastReadingHomePageEvent({
+    required this.isItForUpdate,
+  }) : super();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        isItForUpdate,
+      ];
 }
 
 // ignore: must_be_immutable
 class GetLastTwoWeeksReadingHomePageEvent extends HomePageEvent {
-  const GetLastTwoWeeksReadingHomePageEvent() : super();
+  bool isItForUpdate;
+  GetLastTwoWeeksReadingHomePageEvent({
+    required this.isItForUpdate,
+  }) : super();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        isItForUpdate,
+      ];
 }
 
 // ignore: must_be_immutable

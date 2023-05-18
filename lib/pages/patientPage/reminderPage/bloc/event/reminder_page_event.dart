@@ -6,10 +6,15 @@ abstract class ReminderPageEvent extends Equatable {
 
 // ignore: must_be_immutable
 class GetAllRemindersReminderPageEvent extends ReminderPageEvent {
-  const GetAllRemindersReminderPageEvent() : super();
+  bool isItForUpdate;
+  GetAllRemindersReminderPageEvent({
+    required this.isItForUpdate,
+  }) : super();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        isItForUpdate,
+      ];
 }
 
 // ignore: must_be_immutable

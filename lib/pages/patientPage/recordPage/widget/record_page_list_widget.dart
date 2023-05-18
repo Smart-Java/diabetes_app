@@ -15,12 +15,12 @@ class RecordPageListWidget extends StatefulWidget {
 }
 
 class _RecordPageListWidgetState extends State<RecordPageListWidget> {
-  String cholesterolLevelValue = '10';
-  String medicationsValue = '10';
-  String weightValue = '10';
-  String heightValue = '10';
-  String physicalActivitiesValue = '10';
-  String insulinUsageValue = '10';
+  String cholesterolLevelValue = '';
+  String medicationsValue = '';
+  String weightValue = '';
+  String heightValue = '';
+  String physicalActivitiesValue = '';
+  String insulinUsageValue = '';
 
   bool loadShimmer = false;
   @override

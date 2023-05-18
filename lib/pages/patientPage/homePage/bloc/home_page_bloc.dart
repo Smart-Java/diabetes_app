@@ -2,6 +2,7 @@ import 'package:diabetes_care/localStorage/sharedPreferences/app_shared_preferen
 import 'package:diabetes_care/pages/patientPage/homePage/bloc/event/home_page_event.dart';
 import 'package:diabetes_care/pages/patientPage/homePage/bloc/state/home_page_state.dart';
 import 'package:diabetes_care/pages/patientPage/homePage/service/home_page_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -73,10 +74,13 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       }
     });
     on<GetLastReadingHomePageEvent>((event, emit) async {
-      emit(state.copyWith(
-        userFullname: fullname,
-        isLastReadingRequestInProgress: true,
-      ));
+      if (event.isItForUpdate == false) {
+        emit(state.copyWith(
+          userFullname: fullname,
+          isLastReadingRequestInProgress: true,
+        ));
+      }
+
       String email = await appSharedPreferences.readAuthEmailAddress();
       var readingRequestResponse =
           await homePageService.glucoseReadingRequest();
@@ -142,10 +146,15 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       }
     });
     on<GetLastTwoWeeksReadingHomePageEvent>((event, emit) async {
-      emit(state.copyWith(
-        userFullname: fullname,
-        isLastTwoWeeksRequestInProgress: true,
-      ));
+      if (event.isItForUpdate == false) {
+        emit(state.copyWith(
+          userFullname: fullname,
+          isLastTwoWeeksRequestInProgress: true,
+        ));
+      } else {
+        debugPrint('test');
+      }
+
       String email = await appSharedPreferences.readAuthEmailAddress();
       var lastTwoWeeksRequestResponse =
           await homePageService.glucoseReadingRequest();

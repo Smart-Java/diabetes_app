@@ -90,6 +90,27 @@ class _AuthenticationLoginWidgetState extends State<AuthenticationLoginWidget> {
                     if (isItAPatient == true) {
                       context.router
                           .replaceAll([const PatientDashboardRoute()]);
+                    } else {
+                      if (state.userCategory != null &&
+                          state.userCategory!.isNotEmpty) {
+                        switch (state.userCategory!.toLowerCase()) {
+                          case 'doctor':
+                            context.router
+                                .replaceAll([const DoctorDashboardRoute()]);
+                            break;
+                          case 'dietitain':
+                            context.router
+                                .replaceAll([const DietitianDashboardRoute()]);
+                            break;
+                          case 'care giver':
+                            context.router
+                                .replaceAll([const CareGiverDashboardRoute()]);
+                            break;
+                          default:
+                            context.router
+                                .replaceAll([const DoctorDashboardRoute()]);
+                        }
+                      }
                     }
                   });
                 },

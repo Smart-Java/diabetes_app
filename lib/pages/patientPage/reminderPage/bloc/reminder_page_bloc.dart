@@ -48,9 +48,12 @@ class ReminderPageBloc extends Bloc<ReminderPageEvent, ReminderPageState> {
       }
     });
     on<GetAllRemindersReminderPageEvent>((event, emit) async {
-      emit(state.copyWith(
-        isLoading: true,
-      ));
+      if (event.isItForUpdate == false) {
+        emit(state.copyWith(
+          isLoading: true,
+        ));
+      }
+
       String email = await appSharedPreferences.readAuthEmailAddress();
       var remindersRequestResponse =
           await reminderPageService.getPatientsRemindersRequest();

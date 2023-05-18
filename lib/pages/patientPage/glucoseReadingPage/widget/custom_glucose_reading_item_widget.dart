@@ -1,6 +1,5 @@
 import 'package:diabetes_care/config/appColors/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomGlucoseReadingItemWidget extends StatelessWidget {
   final String imagePath;
@@ -68,11 +67,11 @@ class CustomGlucoseReadingItemWidget extends StatelessWidget {
                   SizedBox(
                     width: 100.0,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         imagePath.isNotEmpty
-                            ? SvgPicture.asset(
+                            ? Image.asset(
                                 imagePath,
                               )
                             : const SizedBox(),

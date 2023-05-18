@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  final bool isItAPatient;
+  const ProfilePage({
+    Key? key,
+    required this.isItAPatient,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,15 @@ class ProfilePage extends StatelessWidget {
       right: false,
       child: BlocProvider(
         create: (context) => getIt<ProfilePageBloc>(),
-        child: const ProfilePageViewWidget(),
+        child: isItAPatient == true
+            ? ProfilePageViewWidget(
+                isItAPatient: isItAPatient,
+              )
+            : Scaffold(
+                body: ProfilePageViewWidget(
+                  isItAPatient: isItAPatient,
+                ),
+              ),
       ),
     );
   }

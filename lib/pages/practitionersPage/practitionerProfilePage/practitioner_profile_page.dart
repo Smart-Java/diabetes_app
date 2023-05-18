@@ -1,3 +1,4 @@
+import 'package:diabetes_care/pages/profilePage/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class PractitionerProfilePage extends StatelessWidget {
@@ -5,13 +6,14 @@ class PractitionerProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        top: false,
-        bottom: false,
-        left: false,
-        right: false,
-        // child: PractitionerProfilePageViewWidget(),
-        child: Container(),
-      );
+    return const SafeArea(
+      top: false,
+      bottom: false,
+      left: false,
+      right: false,
+      child: ProfilePage(
+        isItAPatient: false,
+      ),
+    );
   }
 }

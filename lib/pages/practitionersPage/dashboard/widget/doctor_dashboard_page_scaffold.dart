@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:diabetes_care/config/appColors/app_colors.dart';
 import 'package:diabetes_care/config/appRouterHandler/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class DoctorDashboardPageScaffoldWidget extends StatefulWidget {
   const DoctorDashboardPageScaffoldWidget({
@@ -29,10 +30,10 @@ class _DoctorDashboardPageScaffoldWidgetState
         Scaffold(
       key: _scaffoldKey,
       body: AutoTabsRouter(
-        routes: const [
-          PractitionerHomeRoute(),
-          PractitionerScheduleRoute(),
-          PractitionerProfileRoute(),
+        routes: [
+          PractitionerHomeRoute(isItForDietitian: false),
+          const PractitionerScheduleRoute(),
+          const PractitionerProfileRoute(),
         ],
         builder: (context, child, animation) {
           final navigationRouter = AutoTabsRouter.of(context);
@@ -42,55 +43,62 @@ class _DoctorDashboardPageScaffoldWidgetState
               opacity: animation,
               child: child,
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              elevation: 0.0,
-              backgroundColor: AppColors.whiteColor,
-              selectedItemColor: AppColors.secondaryColor,
-              unselectedItemColor: AppColors.primaryColor,
-              unselectedLabelStyle: const TextStyle(
-                color: AppColors.primaryColor,
-                fontWeight: FontWeight.bold,
+            bottomNavigationBar: SizedBox(
+              height: 70.0,
+              child: BottomNavigationBar(
+                elevation: 0.0,
+                iconSize: 21.0,
+                backgroundColor: AppColors.primaryColor,
+                selectedItemColor: AppColors.whiteColor,
+                unselectedItemColor: AppColors.whiteColor,
+                unselectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                selectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                currentIndex: navigationRouter.activeIndex,
+                onTap: (index) {
+                  setState(() {
+                    if (index != 0) {
+                      showFAB = true;
+                    } else {
+                      showFAB = false;
+                    }
+                    currentIndex = index;
+                  });
+                  navigationRouter.setActiveIndex(index);
+                },
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 5.0,
+                      ),
+                      child: SvgPicture.asset(
+                          'asset/images/bottomNav/home_icon.svg'),
+                    ),
+                    label: 'Home',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.calendar_month,
+                      size: 30.0,
+                    ),
+                    label: 'Schedule',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 5.0,
+                      ),
+                      child: SvgPicture.asset(
+                          'asset/images/bottomNav/profile_icon.svg'),
+                    ),
+                    label: 'Profile',
+                  ),
+                ],
               ),
-              selectedLabelStyle: const TextStyle(
-                color: AppColors.secondaryColor,
-                fontWeight: FontWeight.bold,
-              ),
-              currentIndex: navigationRouter.activeIndex,
-              onTap: (index) {
-                setState(() {
-                  if (index != 0) {
-                    showFAB = true;
-                  } else {
-                    showFAB = false;
-                  }
-                  currentIndex = index;
-                });
-                navigationRouter.setActiveIndex(index);
-              },
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.home,
-                    size: 30.0,
-                  ),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.calendar_month,
-                    size: 30.0,
-                  ),
-                  label: 'Schedule',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.person,
-                    size: 30.0,
-                  ),
-                  label: 'Profile',
-                ),
-              ],
             ),
             // floatingActionButton:
             //     showFAB == true ? fabChildWidget() : Container(),

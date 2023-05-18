@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:diabetes_care/config/appColors/app_colors.dart';
 // import 'package:diabetes_care/pages/patientPage/homePage/widget/bloodGlucoseWidget/blood_glucose_widget.dart';
 import 'package:diabetes_care/pages/patientPage/reminderPage/bloc/event/reminder_page_event.dart';
@@ -18,13 +20,21 @@ class ReminderPageViewWidget extends StatefulWidget {
 
 class _ReminderPageViewWidgetState extends State<ReminderPageViewWidget> {
   bool showAddButton = false;
-  bool openDailog = false;
+  late Timer updateTimer;
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<ReminderPageBloc>(context)
-        .add(const GetAllRemindersReminderPageEvent());
+        .add(GetAllRemindersReminderPageEvent(isItForUpdate: false));
+    updateReminderListings();
+  }
+
+  void updateReminderListings() {
+    updateTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      BlocProvider.of<ReminderPageBloc>(context)
+          .add(GetAllRemindersReminderPageEvent(isItForUpdate: true));
+    });
   }
 
   @override
@@ -78,9 +88,7 @@ class _ReminderPageViewWidgetState extends State<ReminderPageViewWidget> {
                       child: Container(
                         height: 50.0,
                         decoration: BoxDecoration(
-                          color: openDailog == false
-                              ? AppColors.secondaryColor
-                              : AppColors.dividerColor,
+                          color: AppColors.secondaryColor,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: Row(
@@ -109,13 +117,9 @@ class _ReminderPageViewWidgetState extends State<ReminderPageViewWidget> {
     );
   }
 
-  void showAddDailog() async {
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return const NewReminderWidget();
-      },
-    );
+  @override
+  void dispose() {
+    super.dispose();
+    updateTimer.cancel();
   }
 }

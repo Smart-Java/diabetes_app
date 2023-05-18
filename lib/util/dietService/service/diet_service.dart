@@ -33,7 +33,7 @@ class DietService {
             title: title, date: date, details: details, accessCode: accessCode);
         if (addDietRequestResponse == true) {
           responseModel = const AddDietResponseModel(
-            message: 'Diet added successfully!',
+            message: 'Diet added to patient successfully!',
             status: true,
           );
         } else {
@@ -121,9 +121,11 @@ class DietService {
   }) async {
     try {
       String email = '';
+      debugPrint('from diet hello 1');
       final patientsRecordData = await allUsersService.getPatients();
       if (patientsRecordData!.isNotEmpty) {
-        List patientsList = patientsRecordData['patients'];
+        List patientsList = patientsRecordData['patientsList'];
+        debugPrint('from diet $patientsList 1');
         for (var patientsListElement in patientsList) {
           if (patientsListElement['accessCode'] == accessCode) {
             email = patientsListElement['email'];
@@ -136,21 +138,40 @@ class DietService {
         final dietsRecordData = dietsSnapshot.data() as Map<String, dynamic>;
         if (dietsRecordData.isNotEmpty) {
           List dietsList = dietsRecordData['diets'];
+          int elementIndex = 0;
+          bool isAnyElementFound = false;
+          List listToAdd = [];
           for (var dietsListElement in dietsList) {
             if (dietsListElement['email'] == email) {
-              List listToAdd = dietsListElement['diets'];
+              isAnyElementFound = true;
+              elementIndex = dietsList.indexOf(dietsListElement);
+              listToAdd = dietsListElement['diets'];
               listToAdd.add({
                 'title': title,
                 'date': date,
                 'details': details,
               });
-              await dietCollections.doc('dietRecords').set({
-                'diets': [
-                  {'email': email, 'diets': listToAdd}
-                ],
-              });
+            } else {
+              isAnyElementFound = false;
             }
           }
+          if (isAnyElementFound == true) {
+            dietsList[elementIndex] = {
+              'email': email,
+              'diets': listToAdd,
+            };
+          } else {
+            listToAdd.add({
+              'title': title,
+              'date': date,
+              'details': details,
+            });
+          }
+          await dietCollections.doc('dietRecords').update({
+            'diets': [
+              {'email': email, 'diets': listToAdd}
+            ],
+          });
         } else {
           await dietCollections.doc('dietRecords').set({
             'diets': [
@@ -176,23 +197,23 @@ class DietService {
 
   Future<Map?> getDiets() async {
     try {
-      String email = await appSharedPreferences.readAuthEmailAddress();
+      // String email = await appSharedPreferences.readAuthEmailAddress();
       CollectionReference diets =
           FirebaseFirestore.instance.collection('dietCollections');
-      await diets.doc('dietRecords').set({
-        'diets': [
-          {
-            'email': email,
-            'diets': [
-              {
-                'title': 'Cake',
-                'date': DateTime.now().toIso8601String(),
-                'details': '<p>This is a test of the diet description</p>',
-              }
-            ]
-          }
-        ],
-      });
+      // await diets.doc('dietRecords').set({
+      //   'diets': [
+      //     {
+      //       'email': email,
+      //       'diets': [
+      //         {
+      //           'title': 'Cake',
+      //           'date': DateTime.now().toIso8601String(),
+      //           'details': '<p>This is a test of the diet description</p>',
+      //         }
+      //       ]
+      //     }
+      //   ],
+      // });
       var snapshot = await diets.doc('dietRecords').get();
       final data = snapshot.data() as Map<String, dynamic>;
       return data;
@@ -222,50 +243,37 @@ class DietService {
                     .collection('practitionerCollections');
                 List practitionerList =
                     practitionerRecordData['practitionerList'];
+                int practIndexElement = 0;
                 for (var practitionerListElement in practitionerList) {
                   List practitionerDietList =
                       practitionerListElement['dietRequests'];
+                  int indexElement = 0;
+                  bool isItForUpdate = false;
                   for (var practionerDietElement in practitionerDietList) {
                     debugPrint(
                         '${practionerDietElement['patientAccessCode']} $accessCode ${practitionerListElement['email']} $doctorEmail');
                     if ((practitionerListElement['email'] == doctorEmail) &&
                         (practionerDietElement['patientAccessCode'] ==
                             accessCode)) {
+                      practIndexElement =
+                          practitionerList.indexOf(practitionerListElement);
                       if (practitionerListElement['request']
                           .toString()
                           .isEmpty) {
-                        int indexElement =
+                        indexElement =
                             practitionerDietList.indexOf(practionerDietElement);
-                        practitionerDietList[indexElement] = {
-                          'patientAccessCode':
-                              practitionerListElement['patientAccessCode'],
-                          'request': '$email is requesting for diet',
-                        };
-                        await practitioner.doc('practitionerRecords').update({
-                          'practitionerList': [
-                            {
-                              'email': doctorEmail,
-                              'dietRequests': practitionerDietList,
-                            }
-                          ]
-                        });
-                        data = {'status': true, 'message': 'Success'};
+                        isItForUpdate = true;
                       } else {
-                        practitionerDietList.add({
-                          'patientAccessCode': accessCode,
-                          'request': '$email is requesting for diet',
-                        });
-                        await practitioner.doc('practitionerRecords').set({
-                          'practitionerList': [
-                            {
-                              'email': doctorEmail,
-                              'dietRequests': practitionerDietList,
-                            }
-                          ]
-                        });
-
-                        data = {'status': true, 'message': 'Diet request sent successfully'};
+                        isItForUpdate = false;
                       }
+                      // if (practitionerListElement['request']
+                      //     .toString()
+                      //     .isEmpty) {
+                      //   indexElement =
+                      //       practitionerDietList.indexOf(practionerDietElement);
+                      // } else {
+
+                      // }
                     } else {
                       data = {
                         'status': false,
@@ -274,18 +282,48 @@ class DietService {
                       };
                     }
                   }
-                  // else {
-                  //   data = {
-                  //     'status': false,
-                  //     'message': 'Your practitioner has a wrong access code of yours'
-                  //   };
-                  // }
+                  if (isItForUpdate == true) {
+                    practitionerDietList[indexElement] = {
+                      'patientAccessCode':
+                          practitionerListElement['patientAccessCode'],
+                      'request': '$email is requesting for diet',
+                    };
+                    practitionerList[practIndexElement] = {
+                      'email': doctorEmail,
+                      'dietRequests': practitionerDietList,
+                    };
+                    await practitioner.doc('practitionerRecords').update({
+                      'practitionerList': practitionerList,
+                    });
+                    data = {
+                      'status': true,
+                      'message': 'Diet request sent successfully'
+                    };
+                  } else {
+                    practitionerDietList.add({
+                      'patientAccessCode': accessCode,
+                      'request': '$email is requesting for diet',
+                    });
+                    practitionerList[practIndexElement] = {
+                      'email': doctorEmail,
+                      'dietRequests': practitionerDietList,
+                    };
+                    await practitioner
+                        .doc('practitionerRecords')
+                        .update({'practitionerList': practitionerList});
+
+                    data = {
+                      'status': true,
+                      'message': 'Diet request sent successfully'
+                    };
+                  }
                 }
               }
             } else {
               data = {
                 'status': false,
-                'message': 'No access code assigned to a practitioner yet, request for one'
+                'message':
+                    'No access code assigned to a practitioner yet, request for one'
               };
             }
           }

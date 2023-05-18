@@ -136,7 +136,7 @@ class _AuthenticationRegisterWidgetState
                   title: 'Success',
                 );
               },
-            );
+            );  
           }
         }
       },

@@ -8,11 +8,14 @@ import 'package:diabetes_care/pages/patientPage/dietPage/widget/dietDetailsPage/
 import 'package:diabetes_care/pages/patientPage/glucoseReadingPage/glucose_reading_page.dart';
 import 'package:diabetes_care/pages/patientPage/glucoseReadingPage/widget/glucoseReadingViewPage/glucose_reading_view_page.dart';
 import 'package:diabetes_care/pages/patientPage/homePage/home_page.dart';
+import 'package:diabetes_care/pages/practitionersPage/carePatientDetailsPage/care_patients_details_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/dashboard/care_giver_dashboard_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/dashboard/dietitian_dashboard_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/dashboard/doctor_dashboard_page.dart';
+import 'package:diabetes_care/pages/practitionersPage/patientsDetailsPage/patients_details_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/practitionerDietPage/practitioner_diet_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/practitionerHomePage/practitioner_home_page.dart';
+import 'package:diabetes_care/pages/practitionersPage/practitionerPatientRecordPage/practitioner_patient_record_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/practitionerProfilePage/practitioner_profile_page.dart';
 import 'package:diabetes_care/pages/practitionersPage/practitionerSchedulePage/practitioner_schedule_page.dart';
 import 'package:diabetes_care/pages/profilePage/profile_page.dart';
@@ -97,9 +100,6 @@ part 'app_router.gr.dart';
           page: PractitionerSchedulePage,
         ),
         AutoRoute(
-          page: PractitionerDietPage,
-        ),
-        AutoRoute(
           page: PractitionerProfilePage,
         ),
       ],
@@ -108,7 +108,7 @@ part 'app_router.gr.dart';
       page: CareGiverDashboardPage,
       children: [
         AutoRoute(
-          page: PractitionerHomePage,
+          page: CarePatientDetailsPage,
         ),
         AutoRoute(
           page: PractitionerProfilePage,
@@ -120,6 +120,15 @@ part 'app_router.gr.dart';
     ),
     AutoRoute(
       page: DietDetailsPage,
+    ),
+    AutoRoute(
+      page: PatientsDetailsPage,
+    ),
+    AutoRoute(
+      page: PractitionerDietPage,
+    ),
+    AutoRoute(
+      page: PractitionerPatientsRecordPage,
     ),
     AutoRoute(
       page: TestPage,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:diabetes_care/config/appColors/app_colors.dart';
 import 'package:diabetes_care/pages/patientPage/homePage/bloc/event/home_page_event.dart';
 import 'package:diabetes_care/pages/patientPage/homePage/bloc/home_page_bloc.dart';
@@ -15,15 +17,26 @@ class HomePageViewWidget extends StatefulWidget {
 }
 
 class _HomePageViewWidgetState extends State<HomePageViewWidget> {
+  late Timer updateTimer;
   @override
   void initState() {
     super.initState();
     BlocProvider.of<HomePageBloc>(context)
         .add(const GetUserFullnameHomePageEvent());
     BlocProvider.of<HomePageBloc>(context)
-        .add(const GetLastReadingHomePageEvent());
+        .add(GetLastReadingHomePageEvent(isItForUpdate: false));
     BlocProvider.of<HomePageBloc>(context)
-        .add(const GetLastTwoWeeksReadingHomePageEvent());
+        .add(GetLastTwoWeeksReadingHomePageEvent(isItForUpdate: false));
+    updateReadingListings();
+  }
+
+  void updateReadingListings() {
+    updateTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      BlocProvider.of<HomePageBloc>(context)
+          .add(GetLastReadingHomePageEvent(isItForUpdate: true));
+      BlocProvider.of<HomePageBloc>(context)
+          .add(GetLastTwoWeeksReadingHomePageEvent(isItForUpdate: true));
+    });
   }
 
   @override
@@ -75,5 +88,11 @@ class _HomePageViewWidgetState extends State<HomePageViewWidget> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    updateTimer.cancel();
   }
 }

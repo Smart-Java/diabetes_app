@@ -6,10 +6,15 @@ abstract class RecordPageEvent extends Equatable {
 
 // ignore: must_be_immutable
 class GetAllRecordsRecordPageEvent extends RecordPageEvent {
-  const GetAllRecordsRecordPageEvent() : super();
+  bool isItForUpdate;
+  String? praPatientEmail;
+  GetAllRecordsRecordPageEvent({
+    required this.isItForUpdate,
+    this.praPatientEmail,
+  }) : super();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [isItForUpdate, praPatientEmail];
 }
 
 // ignore: must_be_immutable

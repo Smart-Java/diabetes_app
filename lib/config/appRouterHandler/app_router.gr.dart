@@ -85,6 +85,40 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    PatientsDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<PatientsDetailsRouteArgs>();
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: PatientsDetailsPage(
+          key: args.key,
+          patientEmail: args.patientEmail,
+          patientName: args.patientName,
+          isItForCareGiver: args.isItForCareGiver,
+          isItForDietitian: args.isItForDietitian,
+          patientAccessCode: args.patientAccessCode,
+        ),
+      );
+    },
+    PractitionerDietRoute.name: (routeData) {
+      final args = routeData.argsAs<PractitionerDietRouteArgs>();
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: PractitionerDietPage(
+          key: args.key,
+          patientAccessCode: args.patientAccessCode,
+        ),
+      );
+    },
+    PractitionerPatientsRecordRoute.name: (routeData) {
+      final args = routeData.argsAs<PractitionerPatientsRecordRouteArgs>();
+      return AdaptivePage<dynamic>(
+        routeData: routeData,
+        child: PractitionerPatientsRecordPage(
+          key: args.key,
+          praPatientEmailOnPraView: args.praPatientEmailOnPraView,
+        ),
+      );
+    },
     TestRoute.name: (routeData) {
       return AdaptivePage<dynamic>(
         routeData: routeData,
@@ -104,9 +138,14 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     RecordRoute.name: (routeData) {
+      final args = routeData.argsAs<RecordRouteArgs>();
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const RecordPage(),
+        child: RecordPage(
+          key: args.key,
+          isItFromPatientsView: args.isItFromPatientsView,
+          praPatientEmailOnPraView: args.praPatientEmailOnPraView,
+        ),
       );
     },
     DietRoute.name: (routeData) {
@@ -116,9 +155,13 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     ProfileRoute.name: (routeData) {
+      final args = routeData.argsAs<ProfileRouteArgs>();
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const ProfilePage(),
+        child: ProfilePage(
+          key: args.key,
+          isItAPatient: args.isItAPatient,
+        ),
       );
     },
     GlucoseReadingViewRoute.name: (routeData) {
@@ -132,9 +175,13 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     PractitionerHomeRoute.name: (routeData) {
+      final args = routeData.argsAs<PractitionerHomeRouteArgs>();
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const PractitionerHomePage(),
+        child: PractitionerHomePage(
+          key: args.key,
+          isItForDietitian: args.isItForDietitian,
+        ),
       );
     },
     PractitionerScheduleRoute.name: (routeData) {
@@ -149,10 +196,10 @@ class _$AppRouter extends RootStackRouter {
         child: const PractitionerProfilePage(),
       );
     },
-    PractitionerDietRoute.name: (routeData) {
+    CarePatientDetailsRoute.name: (routeData) {
       return AdaptivePage<dynamic>(
         routeData: routeData,
-        child: const PractitionerDietPage(),
+        child: const CarePatientDetailsPage(),
       );
     },
   };
@@ -265,11 +312,6 @@ class _$AppRouter extends RootStackRouter {
               parent: DietitianDashboardRoute.name,
             ),
             RouteConfig(
-              PractitionerDietRoute.name,
-              path: 'practitioner-diet-page',
-              parent: DietitianDashboardRoute.name,
-            ),
-            RouteConfig(
               PractitionerProfileRoute.name,
               path: 'practitioner-profile-page',
               parent: DietitianDashboardRoute.name,
@@ -281,8 +323,8 @@ class _$AppRouter extends RootStackRouter {
           path: '/care-giver-dashboard-page',
           children: [
             RouteConfig(
-              PractitionerHomeRoute.name,
-              path: 'practitioner-home-page',
+              CarePatientDetailsRoute.name,
+              path: 'care-patient-details-page',
               parent: CareGiverDashboardRoute.name,
             ),
             RouteConfig(
@@ -299,6 +341,18 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           DietDetailsRoute.name,
           path: '/diet-details-page',
+        ),
+        RouteConfig(
+          PatientsDetailsRoute.name,
+          path: '/patients-details-page',
+        ),
+        RouteConfig(
+          PractitionerDietRoute.name,
+          path: '/practitioner-diet-page',
+        ),
+        RouteConfig(
+          PractitionerPatientsRecordRoute.name,
+          path: '/practitioner-patients-record-page',
         ),
         RouteConfig(
           TestRoute.name,
@@ -493,6 +547,129 @@ class DietDetailsRouteArgs {
 }
 
 /// generated route for
+/// [PatientsDetailsPage]
+class PatientsDetailsRoute extends PageRouteInfo<PatientsDetailsRouteArgs> {
+  PatientsDetailsRoute({
+    Key? key,
+    required String patientEmail,
+    required String patientName,
+    required bool isItForCareGiver,
+    required bool isItForDietitian,
+    required String patientAccessCode,
+  }) : super(
+          PatientsDetailsRoute.name,
+          path: '/patients-details-page',
+          args: PatientsDetailsRouteArgs(
+            key: key,
+            patientEmail: patientEmail,
+            patientName: patientName,
+            isItForCareGiver: isItForCareGiver,
+            isItForDietitian: isItForDietitian,
+            patientAccessCode: patientAccessCode,
+          ),
+        );
+
+  static const String name = 'PatientsDetailsRoute';
+}
+
+class PatientsDetailsRouteArgs {
+  const PatientsDetailsRouteArgs({
+    this.key,
+    required this.patientEmail,
+    required this.patientName,
+    required this.isItForCareGiver,
+    required this.isItForDietitian,
+    required this.patientAccessCode,
+  });
+
+  final Key? key;
+
+  final String patientEmail;
+
+  final String patientName;
+
+  final bool isItForCareGiver;
+
+  final bool isItForDietitian;
+
+  final String patientAccessCode;
+
+  @override
+  String toString() {
+    return 'PatientsDetailsRouteArgs{key: $key, patientEmail: $patientEmail, patientName: $patientName, isItForCareGiver: $isItForCareGiver, isItForDietitian: $isItForDietitian, patientAccessCode: $patientAccessCode}';
+  }
+}
+
+/// generated route for
+/// [PractitionerDietPage]
+class PractitionerDietRoute extends PageRouteInfo<PractitionerDietRouteArgs> {
+  PractitionerDietRoute({
+    Key? key,
+    required String patientAccessCode,
+  }) : super(
+          PractitionerDietRoute.name,
+          path: '/practitioner-diet-page',
+          args: PractitionerDietRouteArgs(
+            key: key,
+            patientAccessCode: patientAccessCode,
+          ),
+        );
+
+  static const String name = 'PractitionerDietRoute';
+}
+
+class PractitionerDietRouteArgs {
+  const PractitionerDietRouteArgs({
+    this.key,
+    required this.patientAccessCode,
+  });
+
+  final Key? key;
+
+  final String patientAccessCode;
+
+  @override
+  String toString() {
+    return 'PractitionerDietRouteArgs{key: $key, patientAccessCode: $patientAccessCode}';
+  }
+}
+
+/// generated route for
+/// [PractitionerPatientsRecordPage]
+class PractitionerPatientsRecordRoute
+    extends PageRouteInfo<PractitionerPatientsRecordRouteArgs> {
+  PractitionerPatientsRecordRoute({
+    Key? key,
+    required String praPatientEmailOnPraView,
+  }) : super(
+          PractitionerPatientsRecordRoute.name,
+          path: '/practitioner-patients-record-page',
+          args: PractitionerPatientsRecordRouteArgs(
+            key: key,
+            praPatientEmailOnPraView: praPatientEmailOnPraView,
+          ),
+        );
+
+  static const String name = 'PractitionerPatientsRecordRoute';
+}
+
+class PractitionerPatientsRecordRouteArgs {
+  const PractitionerPatientsRecordRouteArgs({
+    this.key,
+    required this.praPatientEmailOnPraView,
+  });
+
+  final Key? key;
+
+  final String praPatientEmailOnPraView;
+
+  @override
+  String toString() {
+    return 'PractitionerPatientsRecordRouteArgs{key: $key, praPatientEmailOnPraView: $praPatientEmailOnPraView}';
+  }
+}
+
+/// generated route for
 /// [TestPage]
 class TestRoute extends PageRouteInfo<void> {
   const TestRoute()
@@ -530,14 +707,41 @@ class ReminderRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [RecordPage]
-class RecordRoute extends PageRouteInfo<void> {
-  const RecordRoute()
-      : super(
+class RecordRoute extends PageRouteInfo<RecordRouteArgs> {
+  RecordRoute({
+    Key? key,
+    required bool isItFromPatientsView,
+    String? praPatientEmailOnPraView,
+  }) : super(
           RecordRoute.name,
           path: 'record-page',
+          args: RecordRouteArgs(
+            key: key,
+            isItFromPatientsView: isItFromPatientsView,
+            praPatientEmailOnPraView: praPatientEmailOnPraView,
+          ),
         );
 
   static const String name = 'RecordRoute';
+}
+
+class RecordRouteArgs {
+  const RecordRouteArgs({
+    this.key,
+    required this.isItFromPatientsView,
+    this.praPatientEmailOnPraView,
+  });
+
+  final Key? key;
+
+  final bool isItFromPatientsView;
+
+  final String? praPatientEmailOnPraView;
+
+  @override
+  String toString() {
+    return 'RecordRouteArgs{key: $key, isItFromPatientsView: $isItFromPatientsView, praPatientEmailOnPraView: $praPatientEmailOnPraView}';
+  }
 }
 
 /// generated route for
@@ -554,14 +758,36 @@ class DietRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ProfilePage]
-class ProfileRoute extends PageRouteInfo<void> {
-  const ProfileRoute()
-      : super(
+class ProfileRoute extends PageRouteInfo<ProfileRouteArgs> {
+  ProfileRoute({
+    Key? key,
+    required bool isItAPatient,
+  }) : super(
           ProfileRoute.name,
           path: 'profile-page',
+          args: ProfileRouteArgs(
+            key: key,
+            isItAPatient: isItAPatient,
+          ),
         );
 
   static const String name = 'ProfileRoute';
+}
+
+class ProfileRouteArgs {
+  const ProfileRouteArgs({
+    this.key,
+    required this.isItAPatient,
+  });
+
+  final Key? key;
+
+  final bool isItAPatient;
+
+  @override
+  String toString() {
+    return 'ProfileRouteArgs{key: $key, isItAPatient: $isItAPatient}';
+  }
 }
 
 /// generated route for
@@ -601,14 +827,36 @@ class GlucoseReadingViewRouteArgs {
 
 /// generated route for
 /// [PractitionerHomePage]
-class PractitionerHomeRoute extends PageRouteInfo<void> {
-  const PractitionerHomeRoute()
-      : super(
+class PractitionerHomeRoute extends PageRouteInfo<PractitionerHomeRouteArgs> {
+  PractitionerHomeRoute({
+    Key? key,
+    required bool isItForDietitian,
+  }) : super(
           PractitionerHomeRoute.name,
           path: 'practitioner-home-page',
+          args: PractitionerHomeRouteArgs(
+            key: key,
+            isItForDietitian: isItForDietitian,
+          ),
         );
 
   static const String name = 'PractitionerHomeRoute';
+}
+
+class PractitionerHomeRouteArgs {
+  const PractitionerHomeRouteArgs({
+    this.key,
+    required this.isItForDietitian,
+  });
+
+  final Key? key;
+
+  final bool isItForDietitian;
+
+  @override
+  String toString() {
+    return 'PractitionerHomeRouteArgs{key: $key, isItForDietitian: $isItForDietitian}';
+  }
 }
 
 /// generated route for
@@ -636,13 +884,13 @@ class PractitionerProfileRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [PractitionerDietPage]
-class PractitionerDietRoute extends PageRouteInfo<void> {
-  const PractitionerDietRoute()
+/// [CarePatientDetailsPage]
+class CarePatientDetailsRoute extends PageRouteInfo<void> {
+  const CarePatientDetailsRoute()
       : super(
-          PractitionerDietRoute.name,
-          path: 'practitioner-diet-page',
+          CarePatientDetailsRoute.name,
+          path: 'care-patient-details-page',
         );
 
-  static const String name = 'PractitionerDietRoute';
+  static const String name = 'CarePatientDetailsRoute';
 }

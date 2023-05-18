@@ -29,11 +29,11 @@ class HomePageService {
 
   Future<ReadingResponseModel?> glucoseReadingRequest() async {
     ReadingResponseModel readingResponseModel;
-    String email = await appSharedPreferences.readAuthEmailAddress();
+    // String email = await appSharedPreferences.readAuthEmailAddress();
     try {
       bool checkInternetConnection = await connection.isInternetEnabled();
       if (checkInternetConnection == true) {
-        var readingResponse = await getTheReadings(email: email);
+        var readingResponse = await getTheReadings();
         if (readingResponse != null && readingResponse.isNotEmpty) {
           readingResponseModel = ReadingResponseModel(
             data: readingResponse,
@@ -103,9 +103,7 @@ class HomePageService {
     return responseModel;
   }
 
-  Future<Map?> getTheReadings({
-    required String email,
-  }) async {
+  Future<Map?> getTheReadings() async {
     try {
       // await addNewGlucoseReadings(email: email);
 
@@ -116,7 +114,7 @@ class HomePageService {
       debugPrint('From glucose readings $data');
       return data;
     } catch (e) {
-      debugPrint('No glucose reading yet $email');
+      debugPrint('No glucose reading yet');
       return {};
     }
   }

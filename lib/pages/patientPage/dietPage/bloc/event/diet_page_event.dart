@@ -6,10 +6,11 @@ abstract class DietPageEvent extends Equatable {
 
 // ignore: must_be_immutable
 class GetAllDietDietPageEvent extends DietPageEvent {
-  const GetAllDietDietPageEvent() : super();
+  bool isItForUpdate;
+  GetAllDietDietPageEvent({required this.isItForUpdate}) : super();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [isItForUpdate];
 }
 
 // ignore: must_be_immutable
@@ -19,4 +20,3 @@ class RequestForDietDietPageEvent extends DietPageEvent {
   @override
   List<Object?> get props => [];
 }
-

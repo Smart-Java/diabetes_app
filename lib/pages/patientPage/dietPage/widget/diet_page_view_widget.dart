@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:diabetes_care/config/appColors/app_colors.dart';
 import 'package:diabetes_care/pages/patientPage/dietPage/bloc/diet_page_bloc.dart';
 import 'package:diabetes_care/pages/patientPage/dietPage/bloc/event/diet_page_event.dart';
@@ -20,11 +22,24 @@ class _DietPageViewWidgetState extends State<DietPageViewWidget> {
 
   bool isDietRequestInProgress = false;
 
+  late Timer updateTimer;
+
   Size deviceSize = const Size(0, 0);
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<DietPageBloc>(context).add(const GetAllDietDietPageEvent());
+    BlocProvider.of<DietPageBloc>(context).add(GetAllDietDietPageEvent(
+      isItForUpdate: false,
+    ));
+    updateDietList();
+  }
+
+  void updateDietList() {
+    updateTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      BlocProvider.of<DietPageBloc>(context).add(GetAllDietDietPageEvent(
+        isItForUpdate: true,
+      ));
+    });
   }
 
   @override
@@ -98,30 +113,33 @@ class _DietPageViewWidgetState extends State<DietPageViewWidget> {
                       child: Container(
                         height: 50.0,
                         decoration: BoxDecoration(
-                          color: openDailog == false
-                              ? AppColors.secondaryColor
-                              : AppColors.dividerColor,
+                          color: AppColors.secondaryColor,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.add_circle_outline,
-                              color: AppColors.whiteColor,
-                              size: 20.0,
-                            ),
-                            const SizedBox(
-                              width: 10.0,
-                            ),
-                            Text(
-                              isDietRequestInProgress == true
-                                  ? 'Requesting...'
-                                  : 'Request Diet',
-                              style: Theme.of(context).textTheme.button,
-                            ),
-                          ],
-                        ),
+                        child: isDietRequestInProgress == false
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.add_circle_outline,
+                                    color: AppColors.whiteColor,
+                                    size: 20.0,
+                                  ),
+                                  const SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Text(
+                                    'Request Diet',
+                                    style: Theme.of(context).textTheme.button,
+                                  ),
+                                ],
+                              )
+                            : Center(
+                                child: Text(
+                                  'Requesting...',
+                                  style: Theme.of(context).textTheme.button,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -153,5 +171,11 @@ class _DietPageViewWidgetState extends State<DietPageViewWidget> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    updateTimer.cancel();
   }
 }

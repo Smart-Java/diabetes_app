@@ -1,6 +1,5 @@
 import 'package:diabetes_care/config/appColors/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomDietItemWidget extends StatelessWidget {
   final String title;
@@ -35,9 +34,8 @@ class CustomDietItemWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: Center(
-                      child: SvgPicture.asset(
-                        'asset/images/diet/diet.svg',
-                        height: 20.0,
+                      child: Image.asset(
+                        'asset/images/diet/diet.png',
                       ),
                     ),
                   ),

@@ -209,50 +209,35 @@ class AllUsersService {
       final patientsRecordData =
           patientsSnapshot.data() as Map<String, dynamic>;
       if (patientsRecordData.isNotEmpty) {
-        // patientsRecordData.forEach((key, value) async {
-        //   if (key == 'email' && value == email) {
-        //     List patientsList = patientsRecordData['patients'];
-        //     for (var element in patientsList) {
-        //       if (element['email'] == value) {
-        //         int elementIndex = patientsList.indexOf(element);
-        //         patientsList[elementIndex] = {
-        //           'email': email,
-        //           'accessCode': accessCode,
-        //         };
-        //       }
-        //     }
-        //     await patients.doc('patientRecords').update({
-        //       'patientsList': patientsList,
-        //     });
-        //   }
-        // });
-
         List patientsList = patientsRecordData['patientsList'];
         bool isThereAnyUserIn = false;
         int userIndex = 0;
+        String doctorEmail = '';
         for (var patientElement in patientsList) {
-          if (patientElement['email'] == email) {
+          if (patientElement['email'].toString().trim() == email.toString()) {
             isThereAnyUserIn = true;
             userIndex = patientsList.indexOf(patientElement);
+            doctorEmail = patientElement['doctorEmail']; 
           } else {
             isThereAnyUserIn = false;
           }
+          debugPrint('${patientElement['email']} $userIndex $isThereAnyUserIn');
         }
 
         if (isThereAnyUserIn == false) {
           patientsList.add({
             'email': email,
             'accessCode': accessCode,
-            'doctorEmail': '',
+            'doctorEmail': doctorEmail,
           });
-          await patients.doc('patientRecords').set({
+          await patients.doc('patientRecords').update({
             'patientsList': patientsList,
           });
         } else {
           patientsList[userIndex] = {
             'email': email,
             'accessCode': accessCode,
-            'doctorEmail': '',
+            'doctorEmail': doctorEmail,
           };
           await patients.doc('patientRecords').update({
             'patientsList': patientsList,
@@ -269,8 +254,6 @@ class AllUsersService {
           ],
         });
       }
-
-      // await patients.doc(email).set({'email': email, 'accessCode': accessCode});
       return true;
     } catch (e) {
       return false;
@@ -289,37 +272,6 @@ class AllUsersService {
       final practitionerRecordData =
           practitionerSnapshot.data() as Map<String, dynamic>;
       if (practitionerRecordData.isNotEmpty) {
-        // practitionerRecordData.forEach((key, value) async {
-        //   if (key == 'email' && value == email) {
-        //     await practitioner.doc('practitionerRecords').update({
-        //       'practitionerList': [
-        //         {
-        //           'email': email,
-        //           'dietRequests': [
-        //             {
-        //               'patientAccessCode': patientAccessCode,
-        //               'request': '',
-        //             }
-        //           ],
-        //         }
-        //       ],
-        //     });
-        //   } else {
-        //     List practitionerList = practitionerRecordData['dietRequests'];
-        //     practitionerList.add({
-        //       'patientAccessCode': patientAccessCode,
-        //       'request': '',
-        //     });
-        //     await practitioner.doc('practitionerRecords').set({
-        //       'practitionerList': [
-        //         {
-        //           'email': email,
-        //           'dietRequests': practitionerList,
-        //         }
-        //       ]
-        //     });
-        //   }
-        // });
         List practitionerList = practitionerRecordData['practitionerList'];
         bool isThereAnyUserIn = false;
         int userIndex = 0;

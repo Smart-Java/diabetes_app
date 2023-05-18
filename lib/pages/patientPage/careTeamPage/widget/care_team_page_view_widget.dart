@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:diabetes_care/pages/patientPage/careTeamPage/bloc/care_team_page_bloc.dart';
 import 'package:diabetes_care/pages/patientPage/careTeamPage/bloc/event/care_team_page_event.dart';
 import 'package:diabetes_care/pages/patientPage/careTeamPage/widget/care_team_header_widget.dart';
@@ -14,11 +16,24 @@ class CareTeamPageViewWidget extends StatefulWidget {
 }
 
 class _CareTeamPageViewWidgetState extends State<CareTeamPageViewWidget> {
+  late Timer updateTimer;
   @override
   void initState() {
     super.initState();
     BlocProvider.of<CareTeamPageBloc>(context)
-        .add(const GetAllCareTeamsCareTeamPageEvent());
+        .add(GetAllCareTeamsCareTeamPageEvent(
+      isItForUpdate: false,
+    ));
+    updateCareTeamList();
+  }
+
+  void updateCareTeamList() {
+    updateTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      BlocProvider.of<CareTeamPageBloc>(context)
+          .add(GetAllCareTeamsCareTeamPageEvent(
+        isItForUpdate: true,
+      ));
+    });
   }
 
   @override
@@ -34,5 +49,11 @@ class _CareTeamPageViewWidgetState extends State<CareTeamPageViewWidget> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    updateTimer.cancel();
   }
 }

@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilePageFormWidget extends StatefulWidget {
-  const ProfilePageFormWidget({Key? key}) : super(key: key);
+  final bool isItAPatient;
+  const ProfilePageFormWidget({
+    Key? key,
+    required this.isItAPatient,
+  }) : super(key: key);
 
   @override
   State<ProfilePageFormWidget> createState() => _ProfilePageFormWidgetState();
@@ -157,61 +161,67 @@ class _ProfilePageFormWidgetState extends State<ProfilePageFormWidget> {
                         : ProfilePageCustomItemWidget(
                             title: 'Email', description: email),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 7.0,
-                    ),
-                    child: editProfile == true
-                        ? Column(
-                            children: [
-                              Card(
-                                elevation: 2.0,
-                                shape: txtFieldBorder,
-                                child: TextField(
-                                  controller: accessNumberController,
-                                  keyboardType: TextInputType.text,
-                                  enabled: !isLoading,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColors.textFieldFilledColor,
-                                    prefixIcon:
-                                        loginIconForm(icon: Icons.numbers),
-                                    hintText: 'Access number',
-                                    border: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                  ),
-                                  onChanged: (value) {
-                                    if (accessNumberController
-                                            .text.isNotEmpty &&
-                                        isThereErrorInAccessNumber == true) {
-                                      setState(() {
-                                        isThereErrorInAccessNumber =
-                                            !isThereErrorInAccessNumber;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ),
-                              isThereErrorInAccessNumber == true
-                                  ? Align(
-                                      alignment: AlignmentDirectional.topStart,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10.0),
-                                        child: Text(
-                                          'Enter your access number',
-                                          style: errorTextStyle,
+                  widget.isItAPatient == true
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 7.0,
+                          ),
+                          child: editProfile == true
+                              ? Column(
+                                  children: [
+                                    Card(
+                                      elevation: 2.0,
+                                      shape: txtFieldBorder,
+                                      child: TextField(
+                                        controller: accessNumberController,
+                                        keyboardType: TextInputType.text,
+                                        enabled: !isLoading,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor:
+                                              AppColors.textFieldFilledColor,
+                                          prefixIcon: loginIconForm(
+                                              icon: Icons.numbers),
+                                          hintText: 'Access number',
+                                          border: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
                                         ),
+                                        onChanged: (value) {
+                                          if (accessNumberController
+                                                  .text.isNotEmpty &&
+                                              isThereErrorInAccessNumber ==
+                                                  true) {
+                                            setState(() {
+                                              isThereErrorInAccessNumber =
+                                                  !isThereErrorInAccessNumber;
+                                            });
+                                          }
+                                        },
                                       ),
-                                    )
-                                  : Container(),
-                            ],
-                          )
-                        : ProfilePageCustomItemWidget(
-                            title: 'Access number', description: accessCode),
-                  ),
+                                    ),
+                                    isThereErrorInAccessNumber == true
+                                        ? Align(
+                                            alignment:
+                                                AlignmentDirectional.topStart,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0),
+                                              child: Text(
+                                                'Enter your access number',
+                                                style: errorTextStyle,
+                                              ),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                )
+                              : ProfilePageCustomItemWidget(
+                                  title: 'Access number',
+                                  description: accessCode),
+                        )
+                      : Container(),
                 ],
               ),
             )

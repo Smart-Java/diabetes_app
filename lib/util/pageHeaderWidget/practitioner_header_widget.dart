@@ -10,14 +10,16 @@ class PractitionerHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 190.0,
+      height: 150.0,
       decoration: const BoxDecoration(
-        color: AppColors.primaryColor,
-      ),
+          color: AppColors.primaryColor,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(40.0),
+          )),
       child: Padding(
         padding: const EdgeInsets.only(
-            // top: .0,
-            ),
+          top: 20.0,
+        ),
         child: Align(
           alignment: AlignmentDirectional.center,
           child: Row(

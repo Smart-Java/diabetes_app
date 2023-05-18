@@ -31,9 +31,9 @@ class _GlucosePageScaffoldWidgetState extends State<GlucosePageScaffoldWidget> {
         routes: [
           GlucoseReadingViewRoute(dataReading: const []),
           const ReminderRoute(),
-          const RecordRoute(),
+          RecordRoute(isItFromPatientsView: true),
           const DietRoute(),
-          const ProfileRoute(),
+          ProfileRoute(isItAPatient: true),
         ],
         builder: (context, child, animation) {
           final navigationRouter = AutoTabsRouter.of(context);

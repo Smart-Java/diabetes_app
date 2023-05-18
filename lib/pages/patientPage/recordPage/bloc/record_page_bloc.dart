@@ -2,6 +2,7 @@ import 'package:diabetes_care/localStorage/sharedPreferences/app_shared_preferen
 import 'package:diabetes_care/pages/patientPage/recordPage/bloc/event/record_page_event.dart';
 import 'package:diabetes_care/pages/patientPage/recordPage/bloc/state/record_page_state.dart';
 import 'package:diabetes_care/pages/patientPage/recordPage/service/record_page_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -49,15 +50,26 @@ class RecordPageBloc extends Bloc<RecordPageEvent, RecordPageState> {
       }
     });
     on<GetAllRecordsRecordPageEvent>((event, emit) async {
-      emit(state.copyWith(
-        isLoading: true,
-      ));
-      String email = await appSharedPreferences.readAuthEmailAddress();
+      if (event.isItForUpdate == false) {
+        emit(state.copyWith(
+          isLoading: true,
+        ));
+      }
+
+      String email = '';
+
+      if (event.praPatientEmail != null && event.praPatientEmail!.isNotEmpty) {
+        email = event.praPatientEmail!;
+      } else {
+        email = await appSharedPreferences.readAuthEmailAddress();
+      }
+
       var recordsRequestResponse =
           await recordPageService.getPatientsRecordRequest();
       if (recordsRequestResponse!.status == true) {
         var data = recordsRequestResponse.data!;
         List records = data['records'] ?? [];
+        debugPrint('patients $records 1');
         if (records.isNotEmpty) {
           for (var recordsElement in records) {
             if (recordsElement['email'] == email) {

@@ -52,6 +52,9 @@ class AuthService {
                       }
                     }
                   }
+                } else{
+                  await appSharedPreferences
+                            .cacheUserFullname(userElement['fullname']);
                 }
               }
             }

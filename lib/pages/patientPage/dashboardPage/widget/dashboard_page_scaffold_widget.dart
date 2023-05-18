@@ -30,12 +30,12 @@ class _DashboardPageScaffoldWidgetState
         Scaffold(
       key: _scaffoldKey,
       body: AutoTabsRouter(
-        routes: const [
-          HomeRoute(),
-          ReminderRoute(),
-          RecordRoute(),
-          DietRoute(),
-          ProfileRoute(),
+        routes:  [
+          const HomeRoute(),
+          const ReminderRoute(),
+          RecordRoute(isItFromPatientsView: true,),
+          const DietRoute(),
+          ProfileRoute(isItAPatient: true),
         ],
         builder: (context, child, animation) {
           final navigationRouter = AutoTabsRouter.of(context);

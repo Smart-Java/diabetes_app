@@ -7,6 +7,8 @@ class CustomCareListItemWidget extends StatelessWidget {
   final String imagePath;
   final String emailAddress;
   final String contact;
+  final VoidCallback givePermision;
+  final String permissionText;
   const CustomCareListItemWidget({
     Key? key,
     required this.name,
@@ -14,6 +16,8 @@ class CustomCareListItemWidget extends StatelessWidget {
     required this.contact,
     required this.emailAddress,
     required this.imagePath,
+    required this.givePermision,
+    required this.permissionText,
   }) : super(key: key);
 
   @override
@@ -28,8 +32,8 @@ class CustomCareListItemWidget extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              height: 100.0,
-              width: 100.0,
+              height: 150.0,
+              width: 130.0,
               decoration: const BoxDecoration(
                 color: AppColors.bgCareTeamImageColor,
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -39,7 +43,7 @@ class CustomCareListItemWidget extends StatelessWidget {
                       child: Icon(
                         Icons.person,
                         color: AppColors.primaryColor,
-                        size: 70.0,
+                        size: 100.0,
                       ),
                     )
                   : Image.network(imagePath),
@@ -77,6 +81,24 @@ class CustomCareListItemWidget extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       text: contact,
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: GestureDetector(
+                        onTap: givePermision,
+                        child: Container(
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Center(
+                              child: Text(
+                            permissionText,
+                            style: Theme.of(context).textTheme.button,
+                          )),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
